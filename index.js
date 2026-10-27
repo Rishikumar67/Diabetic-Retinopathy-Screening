@@ -444,7 +444,7 @@ function updateQualityMetrics(blur, brightness, contrast) {
 
 // Setup Filters
 function setupFilters() {
-  const btns = document.querySelectorAll('.filter-btn');
+  const btns = document.querySelectorAll('.filter-btn[data-filter]');
   btns.forEach(btn => {
     btn.addEventListener('click', () => {
       btns.forEach(b => b.classList.remove('active'));
@@ -575,21 +575,19 @@ function calculateCanvasQuality() {
 // Setup Patient Information Real-Time Synchronization
 function setupPatientInputs() {
   const nameInput = document.getElementById('inputPatientName');
-  const contactInput = document.getElementById('inputContactNumber');
-  const idInput = document.getElementById('inputPatientId');
   const ageInput = document.getElementById('inputAge');
   const genderSelect = document.getElementById('selectGender');
-  const clinicianInput = document.getElementById('inputClinician');
-  const notesInput = document.getElementById('inputClinicalNotes');
+  const contactInput = document.getElementById('inputContactNumber');
 
-  const sync = () => {
+  const onUserChange = () => {
     syncPatientReportValues();
   };
 
-  [nameInput, contactInput, idInput, ageInput, genderSelect, clinicianInput, notesInput].forEach(el => {
+  [nameInput, ageInput, genderSelect, contactInput].forEach(el => {
     if (el) {
-      el.addEventListener('input', sync);
-      el.addEventListener('change', sync);
+      el.addEventListener('input', onUserChange);
+      el.addEventListener('change', onUserChange);
+      el.addEventListener('keyup', onUserChange);
     }
   });
 
@@ -600,37 +598,32 @@ function setupPatientInputs() {
 // Synchronize all form fields into the printable report paper
 function syncPatientReportValues() {
   const name = document.getElementById('inputPatientName')?.value.trim() || 'Rishi Kumar';
-  const contact = document.getElementById('inputContactNumber')?.value.trim() || '8825368714';
-  const id = document.getElementById('inputPatientId')?.value.trim() || 'PID-DR-2026-0842';
   const age = document.getElementById('inputAge')?.value.trim() || '23 Yrs';
   const gender = document.getElementById('selectGender')?.value || 'Male';
-  const clinician = document.getElementById('inputClinician')?.value.trim() || 'Dr. Rishi Kumar (Optometrist / Clinician)';
-  const notes = document.getElementById('inputClinicalNotes')?.value.trim() || 'Type-2 Diabetes annual review. Best corrected visual acuity 6/6 OU. No floaters.';
+  const contact = document.getElementById('inputContactNumber')?.value.trim() || '8825368714';
+  
+  // Auto-filled fields
+  const idEl = document.getElementById('previewId');
+  const id = idEl?.innerText.trim() || 'PID-DR-2026-0842';
 
   const repName = document.getElementById('repPatientName');
+  const repAgeGender = document.getElementById('repAgeGender');
   const repContact = document.getElementById('repContactNumber');
   const repId = document.getElementById('repPatientId');
-  const repAgeGender = document.getElementById('repAgeGender');
-  const repClinician = document.getElementById('repClinician');
-  const repNotes = document.getElementById('repNotes');
 
   if (repName) repName.innerText = name;
+  if (repAgeGender) repAgeGender.innerText = `${age} / ${gender}`;
   if (repContact) repContact.innerText = contact;
   if (repId) repId.innerText = id;
-  if (repAgeGender) repAgeGender.innerText = `${age} / ${gender}`;
-  if (repClinician) repClinician.innerText = clinician;
-  if (repNotes) repNotes.innerText = notes;
 }
 
-// Generate a random MRN identifier
+// Generate a random MRN identifier (Auto-generated)
 function generateRandomMRN() {
   const randNum = Math.floor(1000 + Math.random() * 9000);
   const newId = `PID-DR-2026-${randNum}`;
-  const idInput = document.getElementById('inputPatientId');
-  if (idInput) {
-    idInput.value = newId;
-    syncPatientReportValues();
-  }
+  const previewId = document.getElementById('previewId');
+  if (previewId) previewId.innerText = newId;
+  syncPatientReportValues();
 }
 
 // User-triggered Generate & Update Report button
@@ -659,20 +652,17 @@ function generateReportFromForm() {
 // Reset patient form to standard defaults
 function resetPatientForm() {
   const nameInput = document.getElementById('inputPatientName');
-  const contactInput = document.getElementById('inputContactNumber');
-  const idInput = document.getElementById('inputPatientId');
   const ageInput = document.getElementById('inputAge');
   const genderSelect = document.getElementById('selectGender');
-  const clinicianInput = document.getElementById('inputClinician');
-  const notesInput = document.getElementById('inputClinicalNotes');
+  const contactInput = document.getElementById('inputContactNumber');
 
   if (nameInput) nameInput.value = 'Rishi Kumar';
-  if (contactInput) contactInput.value = '8825368714';
-  if (idInput) idInput.value = 'PID-DR-2026-0842';
   if (ageInput) ageInput.value = '23 Yrs';
   if (genderSelect) genderSelect.value = 'Male';
-  if (clinicianInput) clinicianInput.value = 'Dr. Rishi Kumar (Optometrist / Clinician)';
-  if (notesInput) notesInput.value = 'Type-2 Diabetes annual review. Best corrected visual acuity 6/6 OU. No floaters.';
+  if (contactInput) contactInput.value = '8825368714';
+
+  const previewId = document.getElementById('previewId');
+  if (previewId) previewId.innerText = 'PID-DR-2026-0842';
 
   syncPatientReportValues();
 }

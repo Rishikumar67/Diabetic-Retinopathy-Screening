@@ -531,61 +531,79 @@
       </div>
 
       <!-- Patient Information Inputs Card -->
-      <div class="card" id="patientFormCard" style="max-width: 860px; margin: 0 auto 24px; border: 1px solid rgba(6, 182, 212, 0.3); box-shadow: 0 4px 20px rgba(0,0,0,0.25);">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+      <div class="card" id="patientFormCard" style="max-width: 860px; margin: 0 auto 24px; border: 1px solid rgba(6, 182, 212, 0.4); box-shadow: 0 4px 24px rgba(0,0,0,0.3);">
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 16px; flex-wrap: wrap; gap: 10px;">
           <div>
-            <h3 class="card-title" style="margin-bottom: 2px;">👤 Patient Information & Clinical Details</h3>
-            <div style="font-size: 0.8rem; color: var(--text-muted);">Fill in patient specifics below — report below auto-updates in real time!</div>
+            <h3 class="card-title" style="margin-bottom: 4px; display: flex; align-items: center; gap: 8px;">
+              <span>👤</span> Custom Patient Information
+            </h3>
+            <div style="font-size: 0.82rem; color: var(--text-muted);">
+              Set patient details below (Name, Age, Gender, Phone Number). All other clinical findings are automatically analyzed & filled by the AI model!
+            </div>
           </div>
-          <button type="button" class="sample-chip" onclick="generateRandomMRN()" style="font-size: 0.76rem; padding: 4px 10px;" title="Generate a fresh patient MRN identifier">
-            🎲 New MRN ID
-          </button>
+          <span class="academic-pill" style="margin-bottom: 0; background: rgba(6, 182, 212, 0.15); color: #06B6D4; border-color: rgba(6, 182, 212, 0.4);">
+            ⚡ Real-Time Auto-Fill
+          </span>
         </div>
 
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px;">
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px;">
+          <!-- 1. Patient Full Name -->
           <div>
-            <label style="font-size: 0.78rem; font-weight: 600; color: var(--text-dim); text-transform: uppercase;">Patient Full Name</label>
-            <input type="text" id="inputPatientName" class="filter-btn" style="width: 100%; margin-top: 4px; padding: 10px 14px; text-align: left; background: var(--bg-secondary);" value="Rishi Kumar" placeholder="e.g. Rishi Kumar">
+            <label for="inputPatientName" style="font-size: 0.78rem; font-weight: 700; color: #38BDF8; text-transform: uppercase; letter-spacing: 0.05em; display: block;">
+              👤 Patient Full Name
+            </label>
+            <input type="text" id="inputPatientName" class="clinical-input" value="Rishi Kumar" placeholder="Enter patient name..." autocomplete="name">
           </div>
+
+          <!-- 2. Age -->
           <div>
-            <label style="font-size: 0.78rem; font-weight: 600; color: var(--text-dim); text-transform: uppercase;">Contact Number</label>
-            <input type="tel" id="inputContactNumber" class="filter-btn" style="width: 100%; margin-top: 4px; padding: 10px 14px; text-align: left; background: var(--bg-secondary);" value="8825368714" placeholder="8825368714">
+            <label for="inputAge" style="font-size: 0.78rem; font-weight: 700; color: #38BDF8; text-transform: uppercase; letter-spacing: 0.05em; display: block;">
+              🎂 Patient Age
+            </label>
+            <input type="text" id="inputAge" class="clinical-input" value="23 Yrs" placeholder="e.g. 23 Yrs or 23">
           </div>
+
+          <!-- 3. Gender -->
           <div>
-            <label style="font-size: 0.78rem; font-weight: 600; color: var(--text-dim); text-transform: uppercase;">Patient ID / MRN</label>
-            <input type="text" id="inputPatientId" class="filter-btn" style="width: 100%; margin-top: 4px; padding: 10px 14px; text-align: left; background: var(--bg-secondary);" value="PID-DR-2026-0842">
-          </div>
-          <div>
-            <label style="font-size: 0.78rem; font-weight: 600; color: var(--text-dim); text-transform: uppercase;">Age</label>
-            <input type="text" id="inputAge" class="filter-btn" style="width: 100%; margin-top: 4px; padding: 10px 14px; text-align: left; background: var(--bg-secondary);" value="23 Yrs" placeholder="e.g. 23 Yrs">
-          </div>
-          <div>
-            <label style="font-size: 0.78rem; font-weight: 600; color: var(--text-dim); text-transform: uppercase;">Gender</label>
-            <select id="selectGender" class="filter-btn" style="width: 100%; margin-top: 4px; padding: 10px 14px; text-align: left; background: var(--bg-secondary); color: var(--text-main);">
+            <label for="selectGender" style="font-size: 0.78rem; font-weight: 700; color: #38BDF8; text-transform: uppercase; letter-spacing: 0.05em; display: block;">
+              ⚧️ Gender
+            </label>
+            <select id="selectGender" class="clinical-select">
               <option value="Male" selected>Male</option>
               <option value="Female">Female</option>
               <option value="Other">Other</option>
             </select>
           </div>
+
+          <!-- 4. Phone Number -->
           <div>
-            <label style="font-size: 0.78rem; font-weight: 600; color: var(--text-dim); text-transform: uppercase;">Examining Clinician</label>
-            <input type="text" id="inputClinician" class="filter-btn" style="width: 100%; margin-top: 4px; padding: 10px 14px; text-align: left; background: var(--bg-secondary);" value="Dr. Rishi Kumar (Optometrist / Clinician)" placeholder="Examiner name">
-          </div>
-          <div style="grid-column: span 2;">
-            <label style="font-size: 0.78rem; font-weight: 600; color: var(--text-dim); text-transform: uppercase;">Clinical Notes / Medical History</label>
-            <input type="text" id="inputClinicalNotes" class="filter-btn" style="width: 100%; margin-top: 4px; padding: 10px 14px; text-align: left; background: var(--bg-secondary);" value="Type-2 Diabetes annual review. Best corrected visual acuity 6/6 OU. No floaters." placeholder="Clinical notes, diabetes duration, HbA1c...">
+            <label for="inputContactNumber" style="font-size: 0.78rem; font-weight: 700; color: #38BDF8; text-transform: uppercase; letter-spacing: 0.05em; display: block;">
+              📱 Phone / Contact Number
+            </label>
+            <input type="tel" id="inputContactNumber" class="clinical-input" value="8825368714" placeholder="Enter phone number..." autocomplete="tel">
           </div>
         </div>
 
-        <div style="display: flex; gap: 12px; margin-top: 18px; align-items: center; flex-wrap: wrap;">
+        <!-- Automated Fields Info Badge -->
+        <div style="margin-top: 14px; padding: 10px 14px; background: rgba(16, 185, 129, 0.08); border: 1px dashed rgba(16, 185, 129, 0.35); border-radius: 8px; font-size: 0.8rem; color: #10B981; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px;">
+          <span>
+            🤖 <strong>Automated by AI Pipeline:</strong> Patient ID (<span id="previewId">PID-DR-2026-0842</span>) • Exam Date • AI Staging • Confidence • Lesion Count • Vessel Density • Referral Action
+          </span>
+          <button type="button" class="sample-chip" onclick="generateRandomMRN()" style="font-size: 0.74rem; padding: 3px 8px; margin: 0; background: rgba(16, 185, 129, 0.2); border-color: rgba(16, 185, 129, 0.4); color: #A7F3D0;" title="Generate new Patient ID">
+            🎲 New ID
+          </button>
+        </div>
+
+        <!-- Action Buttons -->
+        <div style="display: flex; gap: 12px; margin-top: 16px; align-items: center; flex-wrap: wrap;">
           <button type="button" class="btn" id="btnUpdateReport" onclick="generateReportFromForm()" style="padding: 10px 22px;">
             ⚡ Update & Generate Report
           </button>
           <button type="button" class="btn btn-secondary" onclick="resetPatientForm()" style="padding: 10px 18px;">
-            🔄 Reset Form
+            🔄 Reset Defaults
           </button>
           <span id="syncToast" style="display: none; color: #10B981; font-weight: 700; font-size: 0.88rem; align-items: center; gap: 6px;">
-            ✅ Report Synchronized in Real-Time!
+            ✅ Report Updated in Real-Time!
           </span>
         </div>
       </div>
