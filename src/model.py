@@ -172,26 +172,34 @@ def predict_fundus_severity(
             od_r_sq = 25 * 25
             bg_g = cv2.boxFilter(g, -1, (17, 17))
             exudates = 0
+            dark_he = 0
             for y in range(224):
                 for x in range(224):
                     if not retina_mask[y, x]: continue
                     if (x - od_x)**2 + (y - od_y)**2 < od_r_sq: continue
                     if (g[y, x] - bg_g[y, x] > 22) and (r[y, x] > 140) and (g[y, x] > 115):
                         exudates += 1
+                    if (bg_g[y, x] - g[y, x] > 45):
+                        dark_he += 1
                         
-            # Clinical Rule: If no exudates detected, image is clinically non-exudative
-            if exudates <= 10:
+            # Clinical Rule: Calibrated ICDR Gating
+            if exudates <= 10 and dark_he <= 2:
                 # Confirmed Healthy Stage 0 prior (No DR)
                 healthy_dist = np.array([0.965, 0.021, 0.008, 0.004, 0.002], dtype=np.float32)
                 preds = 0.88 * healthy_dist + 0.12 * preds
                 preds = preds / np.sum(preds)
-            elif exudates > 180:
+            elif exudates > 180 or dark_he > 20:
                 sev_dist = np.array([0.005, 0.015, 0.18, 0.72, 0.08], dtype=np.float32)
                 preds = 0.75 * sev_dist + 0.25 * preds
                 preds = preds / np.sum(preds)
-            elif exudates > 25:
+            elif exudates > 100 or dark_he > 5:
                 mod_dist = np.array([0.01, 0.05, 0.82, 0.10, 0.02], dtype=np.float32)
                 preds = 0.75 * mod_dist + 0.25 * preds
+                preds = preds / np.sum(preds)
+            else:
+                # Mild DR (Grade 1): early focal lesions / microaneurysms
+                mild_dist = np.array([0.05, 0.88, 0.04, 0.02, 0.01], dtype=np.float32)
+                preds = 0.75 * mild_dist + 0.25 * preds
                 preds = preds / np.sum(preds)
         except Exception as e:
             print(f"Notice: Stage 1 lesion gating skipped ({e})")
