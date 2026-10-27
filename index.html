@@ -357,28 +357,110 @@
       <!-- Metric Stat Cards -->
       <div class="metrics-row">
         <div class="metric-stat-card">
-          <div class="stat-number">92.4%</div>
+          <div class="stat-number">94.9%</div>
           <div class="stat-label">Overall Accuracy</div>
         </div>
         <div class="metric-stat-card">
-          <div class="stat-number">0.887</div>
+          <div class="stat-number">0.873</div>
           <div class="stat-label">Macro F1-Score</div>
         </div>
         <div class="metric-stat-card">
-          <div class="stat-number">94.8%</div>
-          <div class="stat-label">Screening Sensitivity (TPR)</div>
+          <div class="stat-number">100.0%</div>
+          <div class="stat-label">Any DR Sensitivity</div>
         </div>
         <div class="metric-stat-card">
-          <div class="stat-number">96.2%</div>
-          <div class="stat-label">Screening Specificity (TNR)</div>
+          <div class="stat-number">96.6%</div>
+          <div class="stat-label">Referable DR Sensitivity (rDR)</div>
+        </div>
+      </div>
+
+      <!-- Feature Grid: Confusion Matrix, Learning Curves, Distribution, Per-Class -->
+      <div class="evaluation-grid">
+        <!-- 1. Confusion Matrix -->
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <h3 class="card-title">1. Multi-Class Confusion Matrix (5x5)</h3>
+              <div class="card-subtitle">Diagonal displays true positives (TP); off-diagonal reflects misclassification</div>
+            </div>
+            <span class="academic-pill" style="margin:0;">Diagnostic Fidelity</span>
+          </div>
+          <img src="reports/confusion_matrix.png" alt="5x5 Confusion Matrix" class="eval-card-img">
+          <div style="margin-top: 12px; font-size: 0.82rem; color: var(--text-muted); line-height: 1.5;">
+            <strong>Interpretation:</strong> Diagonal cells confirm high fidelity (Grade 0: 81/85, Grade 1: 3/3, Grade 2: 5/6, Grade 3: 20/21, Grade 4: 2/2). Zero catastrophic false negatives (no severe cases misclassified as healthy).
+          </div>
+        </div>
+
+        <!-- 2. Training vs Validation Learning Curves -->
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <h3 class="card-title">2. Training vs Validation Curves</h3>
+              <div class="card-subtitle">Identifies model convergence and confirms absence of overfitting</div>
+            </div>
+            <span class="academic-pill" style="margin:0;">No Overfitting</span>
+          </div>
+          <img src="reports/training_curves.png" alt="Training vs Validation Curves" class="eval-card-img">
+          <div style="margin-top: 12px; font-size: 0.82rem; color: var(--text-muted); line-height: 1.5;">
+            <strong>Convergence Analysis:</strong> Both training and validation categorical cross-entropy losses smoothly decrease from ~1.40 down to ~0.20. Minimal generalization gap confirms dropout (0.4 & 0.2) and early stopping at epoch 12 effectively prevented overfitting.
+          </div>
+        </div>
+
+        <!-- 3. Dataset Distribution & Class Imbalance -->
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <h3 class="card-title">3. Dataset Distribution & Imbalance (PMC+1)</h3>
+              <div class="card-subtitle">585 fundus photographs across 5 grades; class weighting mitigation</div>
+            </div>
+            <span class="academic-pill" style="margin:0;">Weighted CE</span>
+          </div>
+          <img src="reports/dataset_distribution.png" alt="Dataset Distribution" class="eval-card-img">
+          <div style="margin-top: 12px; font-size: 0.82rem; color: var(--text-muted); line-height: 1.5;">
+            <strong>Class Imbalance Strategy:</strong> Grade 0 comprises 72.5% (424) while Grade 1 (17) and Grade 4 (9) represent minority classes. Inverse class weights ($w_j = N / (K \cdot N_j)$) up to $13.8\times$ and dynamic spatial augmentation balance backpropagation updates.
+          </div>
+        </div>
+
+        <!-- 4. Per-Class Precision, Recall & F1 -->
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <h3 class="card-title">4. Per-Class Diagnostic Performance</h3>
+              <div class="card-subtitle">Precision, Recall (Sensitivity), Specificity, and F1 across all grades</div>
+            </div>
+            <span class="academic-pill" style="margin:0;">Grade-wise</span>
+          </div>
+          <img src="reports/per_class_metrics.png" alt="Per-Class Performance" class="eval-card-img">
+          <table class="custom-table" style="margin-top: 12px; font-size: 0.78rem;">
+            <thead>
+              <tr>
+                <th>Severity Grade</th>
+                <th>Precision</th>
+                <th>Sensitivity</th>
+                <th>Specificity</th>
+                <th>F1-Score</th>
+                <th>Support</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td>Grade 0: No DR</td><td>100.0%</td><td>95.3%</td><td>100.0%</td><td>97.6%</td><td>85</td></tr>
+              <tr><td>Grade 1: Mild DR</td><td>50.0%</td><td>100.0%</td><td>97.4%</td><td>66.7%</td><td>3</td></tr>
+              <tr><td>Grade 2: Moderate DR</td><td>71.4%</td><td>83.3%</td><td>98.2%</td><td>76.9%</td><td>6</td></tr>
+              <tr><td>Grade 3: Severe DR</td><td>95.2%</td><td>95.2%</td><td>99.0%</td><td>95.2%</td><td>21</td></tr>
+              <tr><td>Grade 4: Proliferative DR</td><td>100.0%</td><td>100.0%</td><td>100.0%</td><td>100.0%</td><td>2</td></tr>
+            </tbody>
+          </table>
         </div>
       </div>
 
       <!-- Comparative Literature Table -->
       <div class="card">
         <div class="card-header">
-          <h3 class="card-title">Comparative Analysis with Published Literature</h3>
-          <span class="academic-pill" style="margin: 0;">Academic Benchmark</span>
+          <div>
+            <h3 class="card-title">5. Comparative Analysis with Published Literature</h3>
+            <div class="card-subtitle">Benchmarking against landmark deep learning research in JAMA, IEEE, and Nature</div>
+          </div>
+          <span class="academic-pill" style="margin: 0;">Literature Benchmark</span>
         </div>
         <table class="custom-table">
           <thead>
@@ -395,7 +477,7 @@
               <td><strong>Gulshan et al. (2016)</strong> — JAMA</td>
               <td>InceptionV3</td>
               <td>Binary DR (Referable vs None)</td>
-              <td>None</td>
+              <td>None (Black-Box)</td>
               <td>Offline script</td>
             </tr>
             <tr>
@@ -422,9 +504,9 @@
             <tr style="background: rgba(6, 182, 212, 0.08);">
               <td><strong>Proposed Project (Rishi et al., 2026)</strong></td>
               <td><strong>EfficientNetB0 (Fine-Tuned)</strong></td>
-              <td><strong>5-Class Severity + Referral</strong></td>
-              <td><strong>Grad-CAM Saliency</strong></td>
-              <td><strong>Interactive Web UI & Streamlit</strong></td>
+              <td><strong>5-Class Severity + Referable DR</strong></td>
+              <td><strong>Interactive Grad-CAM Saliency</strong></td>
+              <td><strong>Streamlit Dashboard & HTML5 Web App</strong></td>
             </tr>
           </tbody>
         </table>

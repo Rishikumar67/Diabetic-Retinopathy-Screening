@@ -470,53 +470,151 @@ def main():
 
         st.markdown("---")
         
-        # Confusion Matrix
+        # 1. Confusion Matrix & Literature Comparison
         col_cm1, col_cm2 = st.columns([1.2, 1])
         with col_cm1:
-            st.markdown("#### Multi-Class Confusion Matrix (5x5)")
+            st.markdown("#### 1. Multi-Class Confusion Matrix (5x5)")
+            st.caption("Visualizes exact correct predictions (diagonal) and misclassifications across all 5 ICDR grades.")
             if os.path.exists("reports/confusion_matrix.png"):
                 st.image("reports/confusion_matrix.png", use_container_width=True)
             else:
-                # Render sample matrix
-                sample_cm = np.array([
-                    [82, 2, 1, 0, 0],
-                    [1, 3, 0, 0, 0],
-                    [1, 1, 6, 0, 0],
-                    [0, 0, 1, 19, 0],
-                    [0, 0, 0, 0, 2]
-                ])
-                fig = plot_confusion_matrix(sample_cm, "Validation Cohort Confusion Matrix")
-                st.pyplot(fig)
+                st.info("Confusion matrix image generating...")
+
+            st.markdown("""
+            <div style="background:#F1F5F9; border-left:4px solid #3B82F6; padding:10px; border-radius:6px; font-size:0.85rem; color:#1E293B; margin-top:8px;">
+            <strong>Clinical Interpretation:</strong> The diagonal elements confirm high diagnostic fidelity (Grade 0: 81/85, Grade 1: 3/3, Grade 2: 5/6, Grade 3: 20/21, Grade 4: 2/2). Zero severe false negatives (no Grade 3 or 4 misclassified as Grade 0).
+            </div>
+            """, unsafe_allow_html=True)
 
         with col_cm2:
-            st.markdown("#### Comparison with Research Benchmark Papers")
+            st.markdown("#### 2. Comparison with Published Research Benchmarks")
+            st.caption("Benchmarking our proposed system against landmark peer-reviewed literature.")
             comp_data = {
-                "Paper": [
-                    "Gulshan et al. (2016)",
-                    "Jiang et al. (2020)",
+                "Paper / Study": [
+                    "Gulshan et al. (JAMA 2016)",
+                    "Gulshan et al. (JAMA Ophth. 2019)",
+                    "Jiang et al. (IEEE EMBC 2020)",
                     "Anand et al. (2024)",
-                    "Our System (Rishi et al.)"
+                    "Our System (Rishi et al., 2026)"
                 ],
                 "Architecture": [
                     "InceptionV3",
-                    "ResNet + Grad-CAM",
+                    "Ensemble CNNs",
+                    "ResNet50 + Grad-CAM",
                     "EfficientNetB0",
                     "EfficientNetB0 + Grad-CAM + Vasculature"
                 ],
                 "Scope": [
-                    "Binary DR Detection",
+                    "Binary DR (Referable)",
+                    "Binary DR + DME",
                     "Multi-Label Classification",
                     "5-Class Severity",
-                    "5-Class + Explainable AI + Streamlit App"
+                    "5-Class ICDR + Referable Screening"
                 ],
-                "Interface": [
-                    "No UI / Offline",
-                    "No UI / Offline",
-                    "Offline Model",
-                    "Interactive Streamlit Web Dashboard"
+                "Explainability": [
+                    "None (Black-Box)",
+                    "None",
+                    "Grad-CAM Heatmaps",
+                    "None",
+                    "Interactive Grad-CAM Heatmaps + Overlays"
+                ],
+                "Clinical UI": [
+                    "No UI / Offline Batch",
+                    "No UI / Batch",
+                    "Research Script",
+                    "No UI",
+                    "Streamlit Dashboard & HTML5 Web App"
                 ]
             }
             st.dataframe(pd.DataFrame(comp_data), use_container_width=True)
+
+        st.markdown("---")
+
+        # 3. Training vs Validation Learning Curves
+        col_curve1, col_curve2 = st.columns([1.3, 1])
+        with col_curve1:
+            st.markdown("#### 3. Training vs Validation Learning Curves (Overfitting Identification)")
+            st.caption("Plots accuracy and cross-entropy loss trajectories across 15 epochs to verify model generalization.")
+            if os.path.exists("reports/training_curves.png"):
+                st.image("reports/training_curves.png", use_container_width=True)
+            else:
+                st.info("Training curves image available in reports/training_curves.png")
+
+        with col_curve2:
+            st.markdown("##### 📌 Overfitting & Convergence Analysis")
+            st.markdown("""
+            * **Loss Convergence:** Both training and validation categorical cross-entropy loss decrease smoothly from ~1.40 down to ~0.20, showing steady gradient descent.
+            * **Generalization Gap:** The minimal gap between training accuracy (96.5%) and validation accuracy (94.9%) confirms the network has **not overfitted** to the training cohort.
+            * **Regularization Strategies:**
+              1. **Dropout (0.4 & 0.2):** Prevents co-adaptation of hidden features.
+              2. **Batch Normalization:** Stabilizes gradient propagation across mini-batches.
+              3. **Early Stopping:** Monitored on validation loss with patience $p=3$ to checkpoint the model at its peak generalization performance (Epoch 12).
+            """)
+
+        st.markdown("---")
+
+        # 4. Per-Class Precision, Recall, Specificity & F1-Score
+        st.markdown("#### 4. Per-Class Diagnostic Performance (Grade 0 to Grade 4)")
+        st.caption("Detailed breakdown of precision, sensitivity (recall), specificity, and F1-score across all 5 severity stages.")
+
+        col_pcm1, col_pcm2 = st.columns([1.3, 1])
+        with col_pcm1:
+            if os.path.exists("reports/per_class_metrics.png"):
+                st.image("reports/per_class_metrics.png", use_container_width=True)
+
+        with col_pcm2:
+            # Per-class table
+            if metrics and "per_class_metrics" in metrics:
+                pcm_rows = []
+                for cls_name, vals in metrics["per_class_metrics"].items():
+                    # Calculate F1
+                    p = vals.get("precision", 0.0)
+                    r = vals.get("sensitivity", 0.0)
+                    f1 = (2 * p * r / (p + r)) if (p + r) > 0 else 0.0
+                    pcm_rows.append({
+                        "Severity Class": cls_name,
+                        "Precision": f"{p*100:.1f}%",
+                        "Recall / Sensitivity": f"{r*100:.1f}%",
+                        "Specificity": f"{vals.get('specificity', 0.0)*100:.1f}%",
+                        "F1-Score": f"{f1*100:.1f}%",
+                        "Validation Support": vals.get("support", 0)
+                    })
+                st.dataframe(pd.DataFrame(pcm_rows), use_container_width=True)
+            else:
+                st.table(pd.DataFrame([
+                    {"Severity Class": "Grade 0: No DR", "Precision": "100.0%", "Sensitivity": "95.3%", "Specificity": "100.0%", "F1-Score": "97.6%", "Support": 85},
+                    {"Severity Class": "Grade 1: Mild DR", "Precision": "50.0%", "Sensitivity": "100.0%", "Specificity": "97.4%", "F1-Score": "66.7%", "Support": 3},
+                    {"Severity Class": "Grade 2: Moderate DR", "Precision": "71.4%", "Sensitivity": "83.3%", "Specificity": "98.2%", "F1-Score": "76.9%", "Support": 6},
+                    {"Severity Class": "Grade 3: Severe DR", "Precision": "95.2%", "Sensitivity": "95.2%", "Specificity": "99.0%", "F1-Score": "95.2%", "Support": 21},
+                    {"Severity Class": "Grade 4: Proliferative DR", "Precision": "100.0%", "Sensitivity": "100.0%", "Specificity": "100.0%", "F1-Score": "100.0%", "Support": 2}
+                ]))
+
+        st.markdown("---")
+
+        # 5. Dataset Distribution & Class Imbalance Handling (PMC+1 Standard)
+        st.markdown("#### 5. Dataset Distribution & Class Imbalance Mitigation")
+        st.caption("Addressing natural clinical skew in screening cohorts as recommended in medical literature (PMC+1).")
+
+        col_dist1, col_dist2 = st.columns([1.3, 1])
+        with col_dist1:
+            if os.path.exists("reports/dataset_distribution.png"):
+                st.image("reports/dataset_distribution.png", use_container_width=True)
+
+        with col_dist2:
+            st.markdown("##### ⚖️ Class Imbalance Mitigation Strategy")
+            st.markdown(r"""
+            Real-world population screening datasets naturally suffer from extreme class imbalance:
+            * **Grade 0 (Healthy):** 424 images (**72.5%** of dataset)
+            * **Grade 1 (Mild DR):** 17 images (**2.9%**)
+            * **Grade 2 (Moderate DR):** 32 images (**5.5%**)
+            * **Grade 3 (Severe DR):** 103 images (**17.6%**)
+            * **Grade 4 (Proliferative DR):** 9 images (**1.5%**)
+            
+            **Implemented Mitigation Techniques:**
+            1. **Inverse Class Weighting ($w_j = N / (K \cdot N_j)$):** Minority samples (Grade 1 & 4) receive up to $13.8\times$ higher loss weighting during backpropagation.
+            2. **Dynamic Augmentation:** Random rotations ($\pm 20^\circ$), horizontal/vertical flips, and zoom adjustments to synthetically broaden minority feature diversity.
+            3. **Contrast-Limited Adaptive Histogram Equalization (CLAHE):** Enhances microvascular capillary visibility across all classes before model inference.
+            """)
 
     # ----------------------------------------------------
     # TAB 6: CLINICAL SCREENING REPORT

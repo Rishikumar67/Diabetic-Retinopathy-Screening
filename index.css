@@ -766,6 +766,22 @@ body {
   margin-top: 4px;
 }
 
+.evaluation-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(460px, 1fr));
+  gap: 24px;
+  margin-bottom: 30px;
+}
+
+.eval-card-img {
+  width: 100%;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-subtle);
+  background: #000000;
+  margin-top: 12px;
+  display: block;
+}
+
 /* Tables */
 .custom-table {
   width: 100%;
