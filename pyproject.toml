@@ -1,0 +1,14 @@
+[tool.vercel]
+entrypoint = "api:app"
+
+[project]
+name = "diabetic-retinopathy-screening"
+version = "1.0.0"
+description = "Diabetic Retinopathy Screening System with Deep Learning, Vessel/Lesion Analysis, and Explainable AI"
+authors = [
+    { name = "Rishi Kumar", email = "rishi.kumar@iilm.edu" },
+    { name = "Vanshika Pal" },
+    { name = "Samia Khan" }
+]
+readme = "README.md"
+requires-python = ">=3.10"

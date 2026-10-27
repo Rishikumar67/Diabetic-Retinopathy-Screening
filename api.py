@@ -25,13 +25,32 @@ from src.preprocessing import (
 )
 from src.gradcam import compute_gradcam_heatmap, overlay_gradcam_on_image
 
-app = Flask(__name__)
+app = Flask(__name__, static_folder=".", static_url_path="")
+# Standard WSGI / Serverless handler aliases (Vercel, AWS Lambda, Gunicorn)
+application = app
+handler = app
 
-# Global model instance
+# Global model instance with resilient lazy loading
 WEIGHTS_PATH = os.path.join(os.path.dirname(__file__), "saved_models", "efficientnet_b0_dr.weights.h5")
-print(f"Initializing EfficientNetB0 AI model from {WEIGHTS_PATH}...")
-model = load_or_create_model(WEIGHTS_PATH if os.path.exists(WEIGHTS_PATH) else None)
-print("Model ready for inference.")
+_cached_model = None
+
+def get_model():
+    """Lazily load or build the EfficientNet model when first needed."""
+    global _cached_model
+    if _cached_model is None:
+        try:
+            print(f"Initializing EfficientNetB0 AI model from {WEIGHTS_PATH}...")
+            _cached_model = load_or_create_model(WEIGHTS_PATH if os.path.exists(WEIGHTS_PATH) else None)
+            print("Model ready for inference.")
+        except Exception as e:
+            print(f"Notice: Deferred model initialization: {e}")
+    return _cached_model
+
+# Warm up model if possible
+try:
+    _cached_model = get_model()
+except Exception:
+    _cached_model = None
 
 @app.after_request
 def add_cors_headers(response):
@@ -43,6 +62,11 @@ def add_cors_headers(response):
 
 @app.route("/", methods=["GET"])
 def index():
+    # If client prefers HTML or opens in browser, serve index.html if available
+    accept = request.headers.get("Accept", "")
+    if ("text/html" in accept or "*/*" in accept) and os.path.exists(os.path.join(os.path.dirname(__file__), "index.html")):
+        from flask import send_file
+        return send_file(os.path.join(os.path.dirname(__file__), "index.html"))
     return jsonify({
         "system": "Diabetic Retinopathy AI Screening REST API",
         "version": "1.0.0",
@@ -57,9 +81,10 @@ def index():
 
 @app.route("/health", methods=["GET"])
 def health():
+    active_model = get_model()
     return jsonify({
         "status": "healthy",
-        "model_loaded": model is not None,
+        "model_loaded": active_model is not None,
         "backbone": "EfficientNetB0 (Transfer Learning)",
         "classes": [c["name"] for c in SEVERITY_CLASSES.values()],
         "weights_present": os.path.exists(WEIGHTS_PATH)
@@ -86,12 +111,16 @@ def predict():
     except Exception as e:
         return jsonify({"error": str(e)}), 400
 
+    active_model = get_model()
+    if active_model is None:
+        return jsonify({"error": "AI screening model is currently initializing or unavailable."}), 503
+
     # 1. Quality Check
     quality = check_image_quality(img_rgb)
 
     # 2. Preprocess & Predict
     norm_input = preprocess_for_model(img_rgb)
-    prediction = predict_fundus_severity(model, norm_input)
+    prediction = predict_fundus_severity(active_model, norm_input)
 
     response_payload = {
         "success": True,
@@ -128,11 +157,15 @@ def explain():
     except Exception as e:
         return jsonify({"error": str(e)}), 400
 
+    active_model = get_model()
+    if active_model is None:
+        return jsonify({"error": "AI screening model is currently initializing or unavailable."}), 503
+
     norm_input = preprocess_for_model(img_rgb)
-    pred = predict_fundus_severity(model, norm_input)
+    pred = predict_fundus_severity(active_model, norm_input)
     grade = pred["predicted_grade"]
 
-    heatmap = compute_gradcam_heatmap(model, norm_input, class_idx=grade)
+    heatmap = compute_gradcam_heatmap(active_model, norm_input, class_idx=grade)
     superimposed, colored_heatmap = overlay_gradcam_on_image(img_rgb, heatmap, alpha=0.45)
 
     # Convert overlaid image to base64 JPEG
