@@ -22,13 +22,13 @@ import numpy as np
 from PIL import Image
 
 LESION_PALETTE = {
-    "MA": {"name": "Microaneurysms (MA)", "color_rgb": (255, 30, 30), "severity": "Mild"},
-    "HE": {"name": "Hemorrhages (HE)", "color_rgb": (180, 0, 40), "severity": "Moderate/Severe"},
-    "EX": {"name": "Hard Exudates (EX)", "color_rgb": (255, 235, 20), "severity": "Moderate"},
-    "SE": {"name": "Soft Exudates (SE)", "color_rgb": (0, 220, 255), "severity": "Severe"},
-    "CW": {"name": "Cotton Wool Spots (CW)", "color_rgb": (50, 200, 255), "severity": "Severe"},
-    "NV": {"name": "Neovascularization (NV)", "color_rgb": (200, 50, 255), "severity": "Proliferative"},
-    "OD": {"name": "Optic Disc (OD)", "color_rgb": (255, 180, 0), "severity": "Anatomical Landmark"}
+    "MA": {"name": "Microaneurysms (MA)", "color_rgb": (255, 30, 30), "severity": "Mild (Grade 1)", "description": "Focal capillary outpouchings; earliest recognizable sign of DR."},
+    "HE": {"name": "Hemorrhages (HE)", "color_rgb": (180, 0, 40), "severity": "Moderate/Severe (Grade 2-3)", "description": "Intraretinal dot-blot and flame-shaped microvascular hemorrhages."},
+    "EX": {"name": "Hard Exudates (EX)", "color_rgb": (255, 235, 20), "severity": "Moderate (Grade 2)", "description": "Lipid and lipoprotein precipitates leaked from compromised capillaries."},
+    "SE": {"name": "Soft Exudates / Cotton-Wool Spots (SE)", "color_rgb": (0, 220, 255), "severity": "Severe (Grade 3)", "description": "Micro-infarctions of the retinal nerve fiber layer (axoplasmic stasis); medically identical to Cotton-Wool Spots (CW)."},
+    "CW": {"name": "Cotton Wool Spots / Soft Exudates (CW)", "color_rgb": (50, 200, 255), "severity": "Severe (Grade 3)", "description": "Retinal nerve fiber layer infarctions; clinical synonym for Soft Exudates (SE)."},
+    "NV": {"name": "Neovascularization (NV)", "color_rgb": (200, 50, 255), "severity": "Proliferative (Grade 4)", "description": "Abnormal fragile new vessel growth (NVD/NVE) signaling proliferative diabetic retinopathy."},
+    "OD": {"name": "Optic Disc (OD)", "color_rgb": (255, 180, 0), "severity": "Anatomical Landmark", "description": "Exit site for retinal ganglion cell axons and entrance of retinal blood vessels."}
 }
 
 def extract_vessels_morphology(img_rgb: np.ndarray) -> np.ndarray:
@@ -174,7 +174,8 @@ def create_clinical_lesion_overlay(
                     "name": palette["name"],
                     "pixel_count": px_count,
                     "color_rgb": palette["color_rgb"],
-                    "clinical_significance": palette["severity"]
+                    "clinical_significance": palette["severity"],
+                    "description": palette.get("description", "")
                 }
                 total_lesion_pixels += px_count
                 

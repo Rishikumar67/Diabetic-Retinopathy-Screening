@@ -98,10 +98,10 @@ const PRESET_CASES = {
     description: "Soft exudates / cotton-wool spots (SE) from localized nerve fiber ischemia, combined with widespread flame hemorrhages.",
     referral: "URGENT referral to retinal specialist within 2-4 weeks. Very high 1-year progression risk to proliferative diabetic retinopathy.",
     lesions: {
-      ma: { name: "Microaneurysms", count: 10410, color: "#FF1E1E" },
-      he: { name: "Hemorrhages", count: 102377, color: "#B40028" },
-      ex: { name: "Hard Exudates", count: 497671, color: "#FFE100" },
-      se: { name: "Soft Exudates", count: 2832, color: "#00DCFF" }
+      ma: { name: "Microaneurysms (MA)", count: 10410, color: "#FF1E1E" },
+      he: { name: "Hemorrhages (HE)", count: 102377, color: "#B40028" },
+      ex: { name: "Hard Exudates (EX)", count: 497671, color: "#FFE100" },
+      se: { name: "Soft Exudates / Cotton-Wool Spots (SE/CW)", count: 2832, color: "#00DCFF" }
     }
   },
   4: {
@@ -125,11 +125,11 @@ const PRESET_CASES = {
     description: "Neovascularization (NV) and extensive hemorrhages. Fragile new vessels prone to vitreous hemorrhage and retinal detachment.",
     referral: "IMMEDIATE retinal specialist referral (within 24-48 hours) for panretinal photocoagulation (PRP) laser or anti-VEGF injection.",
     lesions: {
-      ma: { name: "Microaneurysms", count: 18568, color: "#FF1E1E" },
-      he: { name: "Hemorrhages", count: 1186642, color: "#B40028" },
-      ex: { name: "Hard Exudates", count: 32900, color: "#FFE100" },
-      se: { name: "Soft Exudates", count: 17787, color: "#00DCFF" },
-      nv: { name: "Neovascularization", count: 1540, color: "#C832FF" }
+      ma: { name: "Microaneurysms (MA)", count: 18568, color: "#FF1E1E" },
+      he: { name: "Hemorrhages (HE)", count: 1186642, color: "#B40028" },
+      ex: { name: "Hard Exudates (EX)", count: 32900, color: "#FFE100" },
+      se: { name: "Soft Exudates / Cotton-Wool Spots (SE/CW)", count: 17787, color: "#00DCFF" },
+      nv: { name: "Neovascularization (NV)", count: 1540, color: "#C832FF" }
     }
   }
 };
