@@ -17,3 +17,11 @@ archive.zip
 *.tif
 *.h5
 *.log
+requirements.txt
+pyproject.toml
+api.py
+app.py
+train.py
+prepare_dataset.py
+read_docx.py
+src/
