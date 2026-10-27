@@ -701,11 +701,11 @@ function analyzeUploadedFundus(imgData, metrics) {
 
   // 3. Clinical ICDR Staging Criteria
   let grade = 0;
-  if (totEx > 600 || totHE > 400) {
+  if (totEx > 350 || totHE > 150) {
     grade = 3; // Severe DR: extensive intraretinal hemorrhages or cotton-wool soft exudates
-  } else if (totEx > 180 || totHE > 80) {
+  } else if (totEx > 140 || totHE > 40) {
     grade = 2; // Moderate DR: confluent hard lipid exudates or significant hemorrhages
-  } else if (totEx > 20 || totMA > 350) {
+  } else if (totEx > 30 || totMA > 380 || totHE > 15) {
     grade = 1; // Mild DR: early microaneurysms or mild focal exudates
   } else {
     grade = 0; // Grade 0: Normal / Healthy Retina (Zero lesions)
