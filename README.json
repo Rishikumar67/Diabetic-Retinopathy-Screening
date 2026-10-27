@@ -1,0 +1,19 @@
+{
+  "project": "AI Retinal Vessel Segmentation & DR Detection",
+  "stage": "Stage 1 \u2014 Vessel & Lesion Segmentation",
+  "total_images": 387,
+  "vessel_masks": 306,
+  "sources": {
+    "RETINOMIX": 233,
+    "VESSEL": 73,
+    "IDRID": 81
+  },
+  "lesion_masks": {
+    "MA": 81,
+    "HE": 80,
+    "EX": 81,
+    "SE": 40,
+    "OD": 81,
+    "merged": 81
+  }
+}

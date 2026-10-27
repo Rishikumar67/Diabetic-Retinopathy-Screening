@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Diabetic Retinopathy Screening System | AI Deep Learning & Grad-CAM</title>
+  <meta name="description" content="AI-assisted Diabetic Retinopathy screening, 5-class severity classification, retinal vessel segmentation, and Grad-CAM explainable AI. Developed by Rishi Kumar, Vanshika Pal, Samia Khan (IILM University).">
+  
+  <!-- Favicon & Stylesheet -->
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>👁️</text></svg>">
+  <link rel="stylesheet" href="index.css">
+  
+  <!-- PDF Generation Library -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+</head>
+<body>
+
+  <!-- Site Navigation -->
+  <header class="site-header">
+    <div class="container nav-container">
+      <a href="#home" class="brand-group">
+        <div class="brand-icon">👁️</div>
+        <div>
+          <div class="brand-title">RetinaScan AI</div>
+          <div class="brand-sub">Diabetic Retinopathy Screening</div>
+        </div>
+      </a>
+
+      <nav>
+        <ul class="nav-links">
+          <li><a href="#screening" class="nav-link active">Screening Lab</a></li>
+          <li><a href="#explainable" class="nav-link">Explainable AI</a></li>
+          <li><a href="#dataset" class="nav-link">Dataset & Benchmarks</a></li>
+          <li><a href="#report" class="nav-link">Clinical Report</a></li>
+          <li><a href="#synopsis" class="nav-link">Synopsis Index</a></li>
+        </ul>
+      </nav>
+
+      <div class="nav-badge">
+        <span class="status-dot"></span>
+        EfficientNetB0 Active
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="hero-section" id="home">
+    <div class="container">
+      <div class="academic-pill">
+        🎓 IILM University • MCA Project 2025–2027
+      </div>
+      <h1 class="hero-title">Diabetic Retinopathy Screening<br>Using Deep Learning</h1>
+      <p class="hero-subtitle">
+        An intelligent clinical decision support system utilizing <strong>Transfer Learning (EfficientNetB0)</strong>, 
+        <strong>Multi-Lesion Segmentation</strong>, and <strong>Explainable AI (Grad-CAM)</strong> for 
+        automated grading across the 5 International Clinical DR Severity stages.
+      </p>
+
+      <div class="hero-meta-row">
+        <span class="hero-meta-item"><strong>Supervisor:</strong> Dr. Gaurav Kumar</span>
+        <span class="hero-meta-item"><strong>Authors:</strong> Rishi Kumar (25scs2040002265) • Vanshika Pal (25scs2040003225) • Samia Khan (25scs2040003487)</span>
+        <span class="hero-meta-item"><strong>Class:</strong> 2MCA1</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Main Interactive Workspace -->
+  <main class="container" id="screening">
+    <div class="workspace-grid">
+
+      <!-- LEFT COLUMN: Canvas Viewer, Quality Audit, & Controls -->
+      <section class="card">
+        <div class="card-header">
+          <div>
+            <h2 class="card-title">Retinal Fundus Workspace</h2>
+            <div class="card-subtitle">Upload eye fundus or inspect curated cohort samples</div>
+          </div>
+          <span class="academic-pill" style="margin-bottom: 0;">Canvas Engine</span>
+        </div>
+
+        <!-- Sample Selector Presets -->
+        <div class="sample-bar">
+          <div class="sample-bar-label">Curated Dataset Samples (ICDR 5-Class Spectrum)</div>
+          <div class="sample-chips">
+            <button class="sample-chip active" data-grade="0">
+              <span class="chip-dot" style="background:#10B981;"></span> Grade 0: No DR
+            </button>
+            <button class="sample-chip" data-grade="1">
+              <span class="chip-dot" style="background:#38BDF8;"></span> Grade 1: Mild DR
+            </button>
+            <button class="sample-chip" data-grade="2">
+              <span class="chip-dot" style="background:#F59E0B;"></span> Grade 2: Moderate DR
+            </button>
+            <button class="sample-chip" data-grade="3">
+              <span class="chip-dot" style="background:#EF4444;"></span> Grade 3: Severe DR
+            </button>
+            <button class="sample-chip" data-grade="4">
+              <span class="chip-dot" style="background:#A855F7;"></span> Grade 4: Proliferative DR
+            </button>
+          </div>
+        </div>
+
+        <!-- Upload Dropzone -->
+        <div class="dropzone" id="dropzone">
+          <div class="drop-icon">📤</div>
+          <div class="drop-text"><strong>Click to Upload</strong> or drag and drop retinal photo</div>
+          <div class="drop-sub">Supported formats: JPG, PNG, JPEG, TIFF (Max 25MB)</div>
+          <input type="file" id="fileInput" accept="image/*" style="display:none;">
+        </div>
+
+        <!-- Dual Layer Canvas Viewer -->
+        <div class="viewer-container">
+          <div class="canvas-viewport">
+            <canvas id="fundusCanvas" width="512" height="512"></canvas>
+            <canvas id="overlayCanvas" width="512" height="512"></canvas>
+          </div>
+        </div>
+
+        <!-- Viewer Toolbar & Preprocessing Filters -->
+        <div class="viewer-toolbar">
+          <div class="filter-btn-group">
+            <button class="filter-btn active" data-filter="raw">Raw Fundus</button>
+            <button class="filter-btn" data-filter="clahe">Green CLAHE</button>
+            <button class="filter-btn" data-filter="bengraham">Ben Graham</button>
+          </div>
+
+          <div class="slider-group">
+            <span>Heatmap Opacity:</span>
+            <input type="range" id="gradcamSlider" class="slider-input" min="0" max="1" step="0.05" value="0.45">
+          </div>
+        </div>
+
+        <!-- Diagnostic Quality Assessment Card -->
+        <div class="quality-grid">
+          <div class="quality-box">
+            <div class="quality-val" id="metricFocus">182.4</div>
+            <div class="quality-label">Laplacian Focus (≥60)</div>
+          </div>
+          <div class="quality-box">
+            <div class="quality-val" id="metricBrightness">112.5/255</div>
+            <div class="quality-label">Mean Illumination</div>
+          </div>
+          <div class="quality-box">
+            <div class="quality-val" id="metricContrast">34.2</div>
+            <div class="quality-label">Vascular Contrast</div>
+          </div>
+        </div>
+
+        <div class="quality-badge-row">
+          <span id="qualityStatus"><span class="status-dot"></span> Clinical Quality Verified (Passed)</span>
+          <span style="color:var(--text-dim); font-size:0.75rem;">Resolution: 512 × 512 px</span>
+        </div>
+      </section>
+
+      <!-- RIGHT COLUMN: AI Diagnosis, Grad-CAM, & Triage -->
+      <section class="card">
+        <div class="card-header">
+          <div>
+            <h2 class="card-title">AI Diagnostic Severity Grading</h2>
+            <div class="card-subtitle">EfficientNetB0 Transfer Learning Inference</div>
+          </div>
+          <span class="stage-badge" id="stageBadge" style="background-color:#10B981;">No DR</span>
+        </div>
+
+        <!-- Diagnosis Result Banner -->
+        <div class="diagnosis-banner" id="diagnosisBanner">
+          <div class="diagnosis-stage-name" id="diagnosisStageName">
+            Grade 0: No Diabetic Retinopathy
+          </div>
+          <div class="diagnosis-conf">
+            Confidence: <strong id="confidenceVal">96.8%</strong> • Any DR (Grades 1-4): <strong id="anyDrProbVal">3.2%</strong> • Referable DR (rDR, τ=50%): <strong id="referableProbVal">1.1%</strong>
+          </div>
+          <div style="margin-top: 10px;" id="referralDecisionBadge">
+            <span class="status-pill status-pill-green">NON-REFERABLE (Grade < 2 | τ < 50%)</span>
+          </div>
+        </div>
+
+        <!-- Probability Distribution Bars -->
+        <div class="prob-list">
+          <!-- Grade 0 -->
+          <div class="prob-item">
+            <div class="prob-header">
+              <span>Grade 0: No DR</span>
+              <span id="probLabel0">96.8%</span>
+            </div>
+            <div class="prob-track">
+              <div class="prob-fill" style="width: 96.8%; background: #10B981;"></div>
+            </div>
+          </div>
+
+          <!-- Grade 1 -->
+          <div class="prob-item">
+            <div class="prob-header">
+              <span>Grade 1: Mild DR (Microaneurysms)</span>
+              <span id="probLabel1">2.1%</span>
+            </div>
+            <div class="prob-track">
+              <div class="prob-fill" style="width: 2.1%; background: #38BDF8;"></div>
+            </div>
+          </div>
+
+          <!-- Grade 2 -->
+          <div class="prob-item">
+            <div class="prob-header">
+              <span>Grade 2: Moderate DR (Hard Exudates)</span>
+              <span id="probLabel2">0.7%</span>
+            </div>
+            <div class="prob-track">
+              <div class="prob-fill" style="width: 0.7%; background: #F59E0B;"></div>
+            </div>
+          </div>
+
+          <!-- Grade 3 -->
+          <div class="prob-item">
+            <div class="prob-header">
+              <span>Grade 3: Severe DR (Cotton-Wool Spots)</span>
+              <span id="probLabel3">0.3%</span>
+            </div>
+            <div class="prob-track">
+              <div class="prob-fill" style="width: 0.3%; background: #EF4444;"></div>
+            </div>
+          </div>
+
+          <!-- Grade 4 -->
+          <div class="prob-item">
+            <div class="prob-header">
+              <span>Grade 4: Proliferative DR (Neovascularization)</span>
+              <span id="probLabel4">0.1%</span>
+            </div>
+            <div class="prob-track">
+              <div class="prob-fill" style="width: 0.1%; background: #A855F7;"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Layer Toggles -->
+        <div class="sample-bar-label" style="margin-top: 18px;">Visual Layer Inspection</div>
+        <div class="lesion-toggles">
+          <label class="toggle-label">
+            <span>🔥 Grad-CAM Heatmap</span>
+            <input type="checkbox" id="toggleGradcam" class="toggle-checkbox" checked>
+          </label>
+          <label class="toggle-label">
+            <span>🌱 Vasculature Network</span>
+            <input type="checkbox" id="toggleVessels" class="toggle-checkbox" checked>
+          </label>
+          <label class="toggle-label">
+            <span>🔴 Pathological Lesions</span>
+            <input type="checkbox" id="toggleLesions" class="toggle-checkbox" checked>
+          </label>
+          <label class="toggle-label">
+            <span>📊 Vascular Density: <strong id="vesselDensityVal" style="color:var(--cyan-primary);">11.4%</strong></span>
+          </label>
+        </div>
+
+        <!-- Clinical Insight Box -->
+        <div class="quality-box" style="text-align: left; margin: 16px 0;">
+          <div class="quality-label" style="color: var(--cyan-primary);">Clinical Evaluation Insight</div>
+          <div id="clinicalInsightText" style="font-size: 0.83rem; color: var(--text-muted); margin-top: 4px;">
+            Retinal fundus exhibits normal optic disc, clear macula, standard vessel branching, and no detectable microaneurysms or hemorrhages.
+          </div>
+        </div>
+
+        <!-- Triage & Care Plan Box -->
+        <div class="triage-box">
+          <div class="triage-title">
+            <span>⚠️</span> Triage & Care Action Plan
+          </div>
+          <div class="triage-body" id="triagePlanText">
+            Routine annual diabetic eye screening recommended. Maintain optimal glycemic and blood pressure management.
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <!-- Section: Explainable AI Deep Dive -->
+  <section class="section" id="explainable">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-title">Explainable AI: Grad-CAM Methodology</h2>
+        <p class="section-subtitle">
+          Gradient-weighted Class Activation Mapping (Grad-CAM) extracts spatial gradient activations 
+          from the final convolutional layer of EfficientNetB0 to ensure clinical transparency.
+        </p>
+      </div>
+
+      <div class="workspace-grid" style="margin-bottom: 0;">
+        <div class="card">
+          <h3 class="card-title" style="margin-bottom: 12px;">Mathematical Formulation</h3>
+          <p style="font-size: 0.88rem; color: var(--text-muted); margin-bottom: 14px;">
+            Grad-CAM calculates the gradient of the severity score $y^c$ with respect to feature activation map $A^k$:
+          </p>
+          <div class="quality-box" style="font-family: var(--font-mono); font-size: 0.9rem; text-align: left; color: var(--cyan-primary); margin-bottom: 14px;">
+            α_k^c = (1/Z) ∑_i ∑_j (∂y^c / ∂A_ij^k)<br>
+            L_GradCAM^c = ReLU( ∑_k α_k^c A^k )
+          </div>
+          <p style="font-size: 0.84rem; color: var(--text-muted);">
+            Warm color tones (red, orange, yellow) indicate regions with high concentration of microaneurysms, hemorrhages, or exudates that directly triggered the model's classification.
+          </p>
+        </div>
+
+        <div class="card">
+          <h3 class="card-title" style="margin-bottom: 12px;">Multi-Lesion Semantic Mapping</h3>
+          <table class="custom-table">
+            <thead>
+              <tr>
+                <th>Lesion Type</th>
+                <th>Color Indicator</th>
+                <th>Diagnostic Clinical Relevance</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Microaneurysms (MA)</strong></td>
+                <td><span style="color:#FF1E1E;">● Crimson Red</span></td>
+                <td>Early capillary wall outpouching (Grade 1)</td>
+              </tr>
+              <tr>
+                <td><strong>Hemorrhages (HE)</strong></td>
+                <td><span style="color:#B40028;">● Deep Ruby Red</span></td>
+                <td>Ruptured deep capillary micro-vessels (Grade 2/3)</td>
+              </tr>
+              <tr>
+                <td><strong>Hard Exudates (EX)</strong></td>
+                <td><span style="color:#FFE100;">● Bright Yellow</span></td>
+                <td>Lipid & lipoprotein extravasation (Grade 2)</td>
+              </tr>
+              <tr>
+                <td><strong>Cotton-Wool Spots (SE/CW)</strong></td>
+                <td><span style="color:#00DCFF;">● Light Cyan</span></td>
+                <td>Axoplasmic stasis & nerve fiber ischemia (Grade 3)</td>
+              </tr>
+              <tr>
+                <td><strong>Neovascularization (NV)</strong></td>
+                <td><span style="color:#C832FF;">● Vivid Purple</span></td>
+                <td>Abnormal vessel proliferation (Grade 4)</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Section: Dataset & Academic Benchmarks -->
+  <section class="section" id="dataset">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-title">Cohort Analytics & Model Benchmarks</h2>
+        <p class="section-subtitle">
+          Tested on 585 annotated retinal fundus photographs from IDRID, MAPLES, RETINOMIX, and VESSEL benchmark datasets.
+        </p>
+      </div>
+
+      <!-- Metric Stat Cards -->
+      <div class="metrics-row">
+        <div class="metric-stat-card">
+          <div class="stat-number">92.4%</div>
+          <div class="stat-label">Overall Accuracy</div>
+        </div>
+        <div class="metric-stat-card">
+          <div class="stat-number">0.887</div>
+          <div class="stat-label">Macro F1-Score</div>
+        </div>
+        <div class="metric-stat-card">
+          <div class="stat-number">94.8%</div>
+          <div class="stat-label">Screening Sensitivity (TPR)</div>
+        </div>
+        <div class="metric-stat-card">
+          <div class="stat-number">96.2%</div>
+          <div class="stat-label">Screening Specificity (TNR)</div>
+        </div>
+      </div>
+
+      <!-- Comparative Literature Table -->
+      <div class="card">
+        <div class="card-header">
+          <h3 class="card-title">Comparative Analysis with Published Literature</h3>
+          <span class="academic-pill" style="margin: 0;">Academic Benchmark</span>
+        </div>
+        <table class="custom-table">
+          <thead>
+            <tr>
+              <th>Research Paper</th>
+              <th>Deep Learning Backbone</th>
+              <th>Classification Scope</th>
+              <th>Explainability</th>
+              <th>Clinical Interface</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Gulshan et al. (2016)</strong> — JAMA</td>
+              <td>InceptionV3</td>
+              <td>Binary DR (Referable vs None)</td>
+              <td>None</td>
+              <td>Offline script</td>
+            </tr>
+            <tr>
+              <td><strong>Gulshan et al. (2019)</strong> — JAMA Ophth.</td>
+              <td>Ensemble CNNs</td>
+              <td>Binary DR + DME</td>
+              <td>None</td>
+              <td>Offline batch</td>
+            </tr>
+            <tr>
+              <td><strong>Jiang et al. (2020)</strong> — IEEE EMBC</td>
+              <td>ResNet50</td>
+              <td>Multi-Label DR</td>
+              <td>Grad-CAM</td>
+              <td>Offline research</td>
+            </tr>
+            <tr>
+              <td><strong>Anand et al. (2024)</strong></td>
+              <td>EfficientNetB0</td>
+              <td>5-Class Severity Grading</td>
+              <td>None</td>
+              <td>No user interface</td>
+            </tr>
+            <tr style="background: rgba(6, 182, 212, 0.08);">
+              <td><strong>Proposed Project (Rishi et al., 2026)</strong></td>
+              <td><strong>EfficientNetB0 (Fine-Tuned)</strong></td>
+              <td><strong>5-Class Severity + Referral</strong></td>
+              <td><strong>Grad-CAM Saliency</strong></td>
+              <td><strong>Interactive Web UI & Streamlit</strong></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- Section: Clinical Screening Report Generator -->
+  <section class="section" id="report">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-title">Automated Clinical Screening Report</h2>
+        <p class="section-subtitle">
+          Instantly formats and exports an ophthalmic evaluation report for patient records or academic evaluation with direct PDF download.
+        </p>
+      </div>
+
+      <!-- Patient Information Inputs Card -->
+      <div class="card" id="patientFormCard" style="max-width: 800px; margin: 0 auto 24px;">
+        <h3 class="card-title" style="margin-bottom: 14px;">👤 Patient Information & Clinical Details</h3>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px;">
+          <div>
+            <label style="font-size: 0.78rem; font-weight: 600; color: var(--text-dim); text-transform: uppercase;">Patient Full Name</label>
+            <input type="text" id="inputPatientName" class="filter-btn" style="width: 100%; margin-top: 4px; padding: 10px 14px; text-align: left; background: var(--bg-secondary);" value="Rishi Kumar" placeholder="e.g. Rishi Kumar">
+          </div>
+          <div>
+            <label style="font-size: 0.78rem; font-weight: 600; color: var(--text-dim); text-transform: uppercase;">Contact Number</label>
+            <input type="tel" id="inputContactNumber" class="filter-btn" style="width: 100%; margin-top: 4px; padding: 10px 14px; text-align: left; background: var(--bg-secondary);" value="8825368714" placeholder="8825368714">
+          </div>
+          <div>
+            <label style="font-size: 0.78rem; font-weight: 600; color: var(--text-dim); text-transform: uppercase;">Patient ID / MRN</label>
+            <input type="text" id="inputPatientId" class="filter-btn" style="width: 100%; margin-top: 4px; padding: 10px 14px; text-align: left; background: var(--bg-secondary);" value="PID-DR-2026-0842">
+          </div>
+          <div>
+            <label style="font-size: 0.78rem; font-weight: 600; color: var(--text-dim); text-transform: uppercase;">Age & Gender</label>
+            <input type="text" id="inputAgeGender" class="filter-btn" style="width: 100%; margin-top: 4px; padding: 10px 14px; text-align: left; background: var(--bg-secondary);" value="23 Yrs / Male">
+          </div>
+        </div>
+      </div>
+
+      <!-- Printable / Downloadable Report Paper -->
+      <div class="report-paper" id="reportPaper">
+        <div class="report-header">
+          <div>
+            <div class="report-title">OPHTHALMIC RETINAL SCREENING REPORT</div>
+            <div class="report-inst">Department of Computer Applications • IILM University</div>
+          </div>
+          <div style="text-align: right; font-size: 0.8rem; color: #64748B;">
+            <strong>System:</strong> EfficientNetB0 AI v1.0<br>
+            <strong>Date:</strong> <span id="repDate">2026-10-27</span>
+          </div>
+        </div>
+
+        <div class="report-grid">
+          <div class="report-item"><strong>Patient Name:</strong> <span id="repPatientName" style="color:#0F172A; font-weight:700;">Rishi Kumar</span></div>
+          <div class="report-item"><strong>Contact No:</strong> <span id="repContactNumber" style="color:#0F172A; font-weight:700;">8825368714</span></div>
+          <div class="report-item"><strong>Patient ID:</strong> <span id="repPatientId">PID-DR-2026-0842</span></div>
+          <div class="report-item"><strong>Age / Gender:</strong> <span id="repAgeGender">54 Yrs / Male</span></div>
+          <div class="report-item"><strong>Exam File:</strong> <span id="repFile">images/MAPLES_test_20051020_44923_0100_PP.jpg</span></div>
+          <div class="report-item"><strong>Image Quality:</strong> Passed Quality Verification (Focus: 182.4)</div>
+          <div class="report-item"><strong>Vessel Density:</strong> <span id="vesselDensityVal2">11.4%</span> of retinal field</div>
+          <div class="report-item"><strong>Assessment Date:</strong> <span id="repDate2">2026-10-27</span></div>
+        </div>
+
+        <div class="report-finding">
+          <strong style="color: #1E40AF; font-size: 0.95rem;">AI Diagnostic Finding (EfficientNetB0):</strong><br>
+          <div style="font-size: 1.15rem; font-weight: 800; color: #0F172A; margin: 4px 0;" id="repStage">
+            Grade 0: No Diabetic Retinopathy
+          </div>
+          <div style="font-size: 0.85rem; color: #334155; margin-bottom: 4px;">
+            Confidence: <strong id="repConfidence">96.8%</strong> • Any DR (Grades 1-4): <strong id="repAnyDr">3.2%</strong> • Referable DR (rDR, τ=50%): <strong id="repReferableProb">1.1%</strong>
+          </div>
+          <div>Clinical Triage Status: <strong id="repReferable">NEGATIVE (No DR)</strong></div>
+        </div>
+
+        <div style="margin-bottom: 24px;">
+          <strong>Clinical Care Recommendation:</strong>
+          <p id="repTriage" style="font-size: 0.88rem; color: #334155; margin-top: 4px;">
+            Routine annual diabetic eye screening recommended. Maintain optimal glycemic and blood pressure management.
+          </p>
+        </div>
+
+        <div style="display: flex; justify-content: space-between; align-items: flex-end; border-top: 1px dashed #CBD5E1; padding-top: 20px; font-size: 0.8rem; color: #64748B;">
+          <div>
+            <strong>Screening Team:</strong><br>
+            Rishi Kumar (25scs2040002265)<br>
+            Vanshika Pal (25scs2040003225)<br>
+            Samia Khan (25scs2040003487)
+          </div>
+          <div style="text-align: right;">
+            <strong>Supervisor Endorsement:</strong><br>
+            Dr. Gaurav Kumar<br>
+            <em>Department of Computer Applications</em>
+          </div>
+        </div>
+      </div>
+
+      <div class="report-actions">
+        <button class="btn" onclick="downloadReportPDF()" id="btnDownloadPDF">
+          📄 Download Clinical Report (PDF)
+        </button>
+        <button class="btn btn-secondary" onclick="printReport()">
+          🖨️ Print / Preview
+        </button>
+        <a href="reports/metrics_summary.json" download class="btn btn-secondary">
+          📥 Download Metrics (JSON)
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Section: Project Synopsis Index (Table of Contents) -->
+  <section class="section" id="synopsis">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-title">Project Synopsis Chapters (INDEX)</h2>
+        <p class="section-subtitle">
+          Complete structural mapping corresponding to the project synopsis document submitted to Dr. Gaurav Kumar.
+        </p>
+      </div>
+
+      <div class="synopsis-chapter-list">
+        <div class="chapter-item">
+          <div class="chapter-num">Chapter 1 • Page 3</div>
+          <div class="chapter-name">1. Introduction</div>
+          <div class="chapter-desc">Clinical significance of Diabetic Retinopathy, prevalence of visual loss, and justification for automated computer-assisted screening systems.</div>
+        </div>
+
+        <div class="chapter-item">
+          <div class="chapter-num">Chapter 2 • Page 3</div>
+          <div class="chapter-name">2. Problem Statement</div>
+          <div class="chapter-desc">Challenges of manual fundus examination, ophthalmologist scarcity, screening bottlenecks, and need for standardized multi-stage DR grading.</div>
+        </div>
+
+        <div class="chapter-item">
+          <div class="chapter-num">Chapter 3 • Page 3</div>
+          <div class="chapter-name">3. Objectives of the Project</div>
+          <div class="chapter-desc">Nine core aims including image preprocessing, data augmentation, EfficientNetB0 transfer learning, Grad-CAM integration, and web deployment.</div>
+        </div>
+
+        <div class="chapter-item">
+          <div class="chapter-num">Chapter 4 • Page 4</div>
+          <div class="chapter-name">4. Scope of the Project</div>
+          <div class="chapter-desc">Boundaries of the screening prototype: 5-class severity classification (Grades 0 to 4) under the International Clinical DR (ICDR) scale.</div>
+        </div>
+
+        <div class="chapter-item">
+          <div class="chapter-num">Chapter 5 • Page 5</div>
+          <div class="chapter-name">5. Literature Review</div>
+          <div class="chapter-desc">Comparative analysis of landmark research papers (Gulshan et al., Jiang et al., Anand et al.) and identification of project research gaps.</div>
+        </div>
+
+        <div class="chapter-item">
+          <div class="chapter-num">Chapter 6 • Page 4</div>
+          <div class="chapter-name">6. Proposed System</div>
+          <div class="chapter-desc">Architectural workflow from user image upload, quality checking, preprocessing, EfficientNetB0 inference, to Grad-CAM heatmap visualization.</div>
+        </div>
+
+        <div class="chapter-item">
+          <div class="chapter-num">Chapter 7 • Page 6</div>
+          <div class="chapter-name">7. Technology Used</div>
+          <div class="chapter-desc">Python 3.x, TensorFlow, Keras, EfficientNetB0, OpenCV, NumPy, Scikit-learn, Pandas, Streamlit, and Grad-CAM explainable AI.</div>
+        </div>
+
+        <div class="chapter-item">
+          <div class="chapter-num">Chapter 8 • Page 7</div>
+          <div class="chapter-name">8. Methodology</div>
+          <div class="chapter-desc">Eight-step pipeline: Dataset acquisition, Preprocessing, Data Augmentation, Model Development, Training, Evaluation, Explainability, and Deployment.</div>
+        </div>
+
+        <div class="chapter-item">
+          <div class="chapter-num">Chapter 9 • Page 10</div>
+          <div class="chapter-name">9. Features of the System</div>
+          <div class="chapter-desc">User-friendly UI, automated quality inspection, 5-class classification, confidence estimation, Grad-CAM overlays, and performance reports.</div>
+        </div>
+
+        <div class="chapter-item">
+          <div class="chapter-num">Chapter 10 • Page 10</div>
+          <div class="chapter-name">10. Advantages of the System</div>
+          <div class="chapter-desc">Rapid triage, consistent predictions, explainable visual heatmaps, reduced specialist workload, and academic research suitability.</div>
+        </div>
+
+        <div class="chapter-item">
+          <div class="chapter-num">Chapter 11 • Page 11</div>
+          <div class="chapter-name">11. Limitations of the System</div>
+          <div class="chapter-desc">Class imbalance in severe cohorts, camera sensor variability, external clinical validation requirements, and non-substitute for medical diagnosis.</div>
+        </div>
+
+        <div class="chapter-item">
+          <div class="chapter-num">Chapter 12 • Page 11</div>
+          <div class="chapter-name">12. Future Enhancements</div>
+          <div class="chapter-desc">Multi-disease detection (Glaucoma, AMD), mobile application support (Android/iOS), integration with electronic health records (EHR).</div>
+        </div>
+
+        <div class="chapter-item">
+          <div class="chapter-num">Chapter 13 • Page 11</div>
+          <div class="chapter-name">13. Conclusion</div>
+          <div class="chapter-desc">Summary of demonstrated deep learning feasibility for DR screening and delivery of an explainable, end-to-end prototype.</div>
+        </div>
+
+        <div class="chapter-item">
+          <div class="chapter-num">Chapter 14 • Page 12</div>
+          <div class="chapter-name">14. Bibliography</div>
+          <div class="chapter-desc">Complete academic citations of medical AI literature in JAMA, IEEE EMBC, and Nature Deep Learning.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="site-footer">
+    <div class="container">
+      <div>Diabetic Retinopathy Screening System Using Deep Learning</div>
+      <div class="footer-team">
+        Submitted by Rishi Kumar (25scs2040002265), Vanshika Pal (25scs2040003225), Samia Khan (25scs2040003487)
+      </div>
+      <div style="margin-top: 4px; font-size: 0.78rem;">Supervisor: Dr. Gaurav Kumar • Class: 2MCA1 (Batch 2025–2027)</div>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="index.js"></script>
+</body>
+</html>

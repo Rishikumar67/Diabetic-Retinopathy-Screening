@@ -1,0 +1,21 @@
+# Virtual Environment
+.venv/
+env/
+venv/
+ENV/
+
+# Python Cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Large archives and temp files
+archive.zip
+archive/
+*.log
+.system_generated/
+
+# OS specific
+.DS_Store
+Thumbs.db

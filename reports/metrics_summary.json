@@ -1,0 +1,97 @@
+{
+  "accuracy": 0.9487,
+  "precision_macro": 0.8333,
+  "recall_macro": 0.9477,
+  "f1_macro": 0.8728,
+  "f1_weighted": 0.9536,
+  "auc_score": 0.942,
+  "binary_screening": {
+    "accuracy": 0.9658,
+    "sensitivity": 1.0,
+    "specificity": 0.9529,
+    "f1_score": 0.9412,
+    "tp": 32,
+    "tn": 81,
+    "fp": 4,
+    "fn": 0
+  },
+  "referable_dr_screening": {
+    "accuracy": 0.9744,
+    "sensitivity": 0.9655,
+    "specificity": 0.9773,
+    "f1_score": 0.9492,
+    "tp": 28,
+    "tn": 86,
+    "fp": 2,
+    "fn": 1
+  },
+  "per_class_metrics": {
+    "No DR": {
+      "sensitivity": 0.9529,
+      "specificity": 1.0,
+      "precision": 1.0,
+      "support": 85
+    },
+    "Mild DR": {
+      "sensitivity": 1.0,
+      "specificity": 0.9737,
+      "precision": 0.5,
+      "support": 3
+    },
+    "Moderate DR": {
+      "sensitivity": 0.8333,
+      "specificity": 0.982,
+      "precision": 0.7143,
+      "support": 6
+    },
+    "Severe DR": {
+      "sensitivity": 0.9524,
+      "specificity": 0.9896,
+      "precision": 0.9524,
+      "support": 21
+    },
+    "Proliferative DR": {
+      "sensitivity": 1.0,
+      "specificity": 1.0,
+      "precision": 1.0,
+      "support": 2
+    }
+  },
+  "confusion_matrix": [
+    [
+      81,
+      2,
+      1,
+      1,
+      0
+    ],
+    [
+      0,
+      3,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      1,
+      5,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      1,
+      20,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      0,
+      2
+    ]
+  ]
+}

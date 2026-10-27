@@ -1,0 +1,341 @@
+Project Synopsis
+Title:
+Diabetic Retinopathy Screening Using Deep Learning
+.
+Submitted to:
+Dr. Gaurav Kumar
+Submitted by:
+Vanshika Pal(25scs2040003225)
+Rishi Kumar(25scs2040002265)
+Samia Khan(25scs2040003487)
+Class:
+2MCA1
+Batch:
+2025-2027
+INDEX
+S. No.
+Chapter / Topic
+Page No.
+1
+Introduction
+3
+2
+Problem Statement
+3
+3
+Objectives of the Project
+3
+4
+Scope of the Project
+4
+5
+Literature Review
+5
+6
+Proposed System
+4
+7
+Technology Used
+6
+8
+Methodology
+7
+9
+Features of the System
+10
+10
+Advantages of the Proposed System
+10
+11
+Limitations of the System
+11
+12
+Future Enhancements
+11
+13
+Conclusion
+11
+14
+Bibliography
+12
+1. Introduction
+Diabetic Retinopathy (DR) is one of the serious complications of Diabetes and if not diagnosed and treated in early stages of the disease, it can lead to severe visual defects or even to blindness. It happens when the blood vessels in the retina are damaged because of the high blood sugar for a long time. Retinal fundus images can be used to diagnose DR.
+Traditional screening involves ophthalmologists using manual inspection to look at retinal images. This can be a lengthy process to carry out, particularly if there are many patients to be screened. The aim of the proposed project is to create a Diabetic Retinopathy Screening System based on Deep Learning to automatically analyze retinal fundus images and estimate the severity of DR.
+The algorithm involves image preprocessing and transfer learning with EfficientNetB0 to recognize retinal images at different levels of severity. To get a visual explanation of the model's prediction, we use Grad-CAM. A Streamlit web app enables users to upload retinal photos and get a screening result aided by the AI.
+2. Problem Statement
+The process of manual exam of the fundus is time consuming and needs medical expertise if there are a lot of patients to be screened.
+Therefore, there is an urgent need of an automated system which can:
+Analyse images of the back of the eye.
+•
+Identify possible diabetic retinopathy.
+•
+Describe the classification of the severity of DR.
+Make consistent computer-aided predictions.
+•
+Assist in prioritizing images that may need further professional evaluation.
+The project is designed to create an automated screening system based on Deep Learning techniques for the identification and classification of DR from the fundus images of retina.
+3. Objectives of the Project
+Project aims are:
+1. To obtain an appropriate image set of the retina.
+2. To do Preprocessing and enhancement of retinal images.
+3. To use data augmentation to enhance generalisation of the model.
+4. The aim of the fourth step is to create a Deep Learning model by transfer learning.
+5. To classify retinal images into different diabetic retinopathy severity levels.
+6. To assess the model using suitable classification measures.
+7. To apply Grad-CAM to see the visual representations of predictions.
+8. To develop a simple and user-friendly Streamlit web application.
+9. To deliver an AI assisted-screening result for academics and research use.
+4. Scope of the Project
+The project is aimed at creating an AI-supported Screening prototype analyzing the Retinal fundus images.
+The system will be able to categorize retinal images into five severity classes:
+Class
+Severity
+0
+No Diabetic Retinopathy
+1
+Mild Diabetic Retinopathy
+2
+Moderate Diabetic Retinopathy
+3
+Severe Diabetic Retinopathy
+4
+Proliferative Diabetic Retinopathy
+5. Proposed System
+We will present a system based on Deep learning for automatic analysis of retinal fundus images.
+The user uploads a retinal image on the Streamlit web app. The image is preprocessed first by resizing followed by appropriate handling of the image quality and then normalised. The processed image is then passed on to the trained EfficientNetB0 model.
+The model is designed to identify key visual features from an image and categorize it into one of the five stages of DR.After classification, the system displays:
+•
+Predicted severity class.
+•
+Prediction confidence.
+•
+Grad-CAM visualization of regions that affect the prediction.
+Thus, the proposed system is capable of prediction and with visualization of the prediction.
+5. Literature Review
+The use of retinal fundus images for the screening of Diabetic Retinopathy (DR) is another significant field of Artificial Intelligence and Deep Learning. However, traditional screening involves trained ophthalmologists or graders examining the image of the retina, which can be time consuming if many patients need screening. Therefore, automated Deep Learning systems for detecting and grading DR have been explored.
+The other study based on the EfficientNet proposed an end-to-end diagnostic system for diabetic retinopathy (DR) grading and detection of macular edema (ME) and applied Grad-CAM to visualize the influential areas of the image. The study shows how EfficientNetB0 and explainable AI approaches can be integrated to carry out retinal image analysis. But the study was based on fluorescein angiography images while the present project is based on retinal fundus photograph. The findings, therefore, support the technical approach, but fail to fully address the specific fundus-image screening workflow proposed in this project.
+Comparison of the research papers
+No.
+Research Paper
+Main Contribution
+Research Gap / Limitation Relevant to Your Project
+1
+Gulshan et al. (2016) –
+Development and Validation of a Deep Learning Algorithm for Detection of Diabetic Retinopathy in Retinal Fundus Photographs
+Demonstrated that Deep Learning can be effectively used for automated detection of diabetic retinopathy from retinal fundus photographs.
+The study primarily focuses on DR detection rather than providing a complete five-class severity classification system with an integrated visual explanation and user-friendly screening interface.
+2
+Gulshan et al. (2019) –
+Performance of a Deep-Learning Algorithm vs Manual Grading for Detecting Diabetic Retinopathy in India
+Demonstrated the feasibility of automated DR screening in an Indian clinical setting and compared automated predictions with human grading.
+The primary clinical outputs focused on referable DR and diabetic macular edema. There is scope for a system that emphasizes detailed five-class DR severity classification and provides visual explanations.
+3
+Jiang et al. (2020) –
+A Multi-Label Deep Learning Model with Interpretable Grad-CAM for Diabetic Retinopathy Classification
+Incorporated Grad-CAM to identify image regions influencing the model's prediction, improving interpretability of automated DR classification.
+The study emphasizes interpretable classification, while your project combines Grad-CAM with EfficientNetB0, five-class severity classification, preprocessing, augmentation and a web-based interface.
+4
+Anand et al. (2024) –
+Smart Grading of Diabetic Retinopathy: An Intelligent Recommendation-Based Fine-Tuned EfficientNetB0 Framework
+Demonstrated the effectiveness of EfficientNetB0 for DR grading and compared its performance with other
+Deep Learning architectures.
+EfficientNetB0 has already been investigated for DR classification, so using EfficientNetB0 alone cannot be claimed as a research novelty. Your project instead focuses on integrating classification, explainability and deployment into one prototype.
+5
+EfficientNetB0-Based End-to-End Diagnostic System for Diabetic Retinopathy Grading and Macular Edema Detection
+Combined EfficientNetB0 and Grad-CAM for retinal disease analysis and extended the task to DR grading and macular-edema detection.
+The study uses a different retinal imaging modality from the fundus-image workflow proposed in your project. It also focuses on a broader diagnostic task, leaving scope for a simpler fundus-image-based five-class screening prototype.
+6
+Ghadai et al. (2026) –
+A Clinically Interpretable Deep Learning Pipeline for Diabetic Retinopathy Classification Using EfficientNet, Advanced Data Augmentation and GradCAM
+Combined EfficientNet, image enhancement, data augmentation, Grad-CAM and five-class DR classification into an interpretable pipeline.
+This is very close to your proposed project. The study reports challenges with Severe DR classification and limitations in generalization when relying on a single public dataset. Therefore, your project should focus on practical integration and clearly position itself as an academic/research prototype, rather than claiming the individual
+Research Gap
+Current studies reveal that, Deep Learning already has a great potential for automated DR screening. But a number of issues still lie ahead. First, automated DR detection and screening for DR are well established, and detailed, five-class severity classification is challenging because of the similarities in characteristics between adjacent disease classes. Second, class imbalance may cause a decrease in performance for the less-represented severe disease classes. Third, the image quality differences and/or acquisition device, population, clinical environments may affect the generalization of the model. Lastly, even though the explainability methods like Grad-CAM have been explored, an integrated and user friendly screening prototype based on classification, confidence information and explainability is still useful for academic and research purposes.
+In the context, the present project would like to develop end-to-end prototype for screening retinal fundus image using Deep Learning. Pre-processing and data augmentation are done prior to transfer learning using EfficientNetB0 to classify the images into five DR severity categories. The Grad-CAM is embedded to visualize the prediction of the model and the Streamlit interface allows the user to upload retinal images and then display the severity, confidence score and visualization.
+However, for the proposed work, it proposes to concentrate on a new Deep Learning architecture for the integration of already existing Deep Learning methods into a simple, explainable and easy to use academic screening system for students. This system is designed
+for academic and research use and will undergo external and clinical testing prior to use in the real world for medical applications.
+6. Technology Used
+Programming Language
+Python 3.x
+Deep Learning
+TensorFlow
+Keras
+EfficientNetB0
+Image Processing
+OpenCV
+NumPy
+Matplotlib
+Machine Learning
+Scikit-learn
+Pandas
+Web Development
+Streamlit
+Explainable AI
+Grad-CAM
+Development Environment
+Jupyter Notebook
+Google Colab
+Visual Studio Code
+Version Control
+Git
+GitHub
+The project synopsis specifies these technologies and tools for implementation.
+7. Methodology
+The proposed methodology consists of the following stages:
+Step 1: Dataset Collection
+It will be assumed that the dataset of retinal fundus images used for training and testing is publicly available, like in the APTOS 2019 Blindness Detection dataset.
+Step 2:
+Data Preprocessing
+The gathered pictures will be processed with:
+•
+Image resizing
+•
+Pixel normalization
+•
+Image-quality checking
+Advanced techniques and tools for color correction.Color correction for print and color in print using advanced techniques and tools.
+Step 3:
+Data Augmentation
+Models can be generalized by the addition of training images that are augmented by:
+•
+Rotation
+•
+Horizontal flipping
+•
+Zooming
+•
+Translation
+•
+Brightness adjustment
+Step 4:
+Model Development
+The main architecture that will be used as a transfer-learning is EfficientNetB0. The model will be fine-tuned and differentiated into the five severity classes of DR, based on the retinal images..
+Step 5:
+Model Training
+The prepared dataset will be used for training the model. Techniques such as:
+•
+Class weighting
+•
+Dropout
+•
+Early stopping
+•
+Learning-rate scheduling
+may be applied to minimise overfitting and deal with the class imbalance problem.
+Step 6:
+Model Evaluation
+The trained model will be tested with:
+•
+Accuracy
+•
+Precision
+•
+Recall
+•
+F1-score
+•
+Sensitivity
+•
+Specificity
+•
+Confusion Matrix
+Step 7: Explainable AI
+A heatmap that indicates the regions important for the model's prediction in the retinal image will be generated using the Grad-CAM technique.
+Step 8: Web Application
+A Streamlit application will be created, in which users can upload an image and get the predicted severity, confidence score, and Grad-CAM visualization.
+Overall Workflow
+Retinal Fundus Image
+↓
+Image Preprocessing
+↓
+Resize & Normalization
+↓
+Data Augmentation
+↓
+EfficientNetB0
+↓
+Feature Extraction
+↓
+Disease Classification
+↓
+┌───────────────┐
+↓               ↓
+Severity       Grad-CAM
+Prediction     Visualization
+↓               ↓
+└───────
+┬
+───────┘
+↓
+Screening Result
+↓
+Streamlit Web App
+This workflow is given in the project synopsis.
+8. Features of the System
+Main features of the proposed system are:
+Retinal Image Upload- Users can upload retinal fundus images via the web application.
+2. Extract features from the image (Image Feature Extraction).
+3.
+Five-Class Classification
+- This system: Classifies the image into five severity classes of diabetic retinopathy.
+4.
+The AI-Based Prediction
+- EfficientNetB0 performs a retinal image analysis.
+5.
+Prediction Confidence
+- The degree of confidence of prediction will be shown by the system.
+6.
+Grad-CAM Visualization
+- The regions that were important for the model's prediction is identified by a heatmap.
+The system can be evaluated by using
+7 models: Accuracy, Precision, Recall, F1-score, Sensitivity, Specificity and Confusion Matrix.
+8. User Friendly UI- Streamlit offers a user-friendly interface to interact with the screening system.
+9. Advantages of the Proposed System
+The proposed system has a number of benefits:
+Automated screening: The retinal images can be analyzed automatically.
+•
+Time efficient:
+It can efficiently process many retinal images.
+Severity classification: It provides severity classification greater than 5 DR severity levels.
+Consistency predictions: System can make predictions with the trained model.
+Explainable results: Grad-CAM provides a visual explanation of the model's prediction.
+Straightforward to use: It is easy to upload images and check the results from the Streamlit interface.
+Academic research: Project is useful in academic research of Deep Learning and Computer Vision in the field of medical image analysis.
+Priority of screening: It may be able to assist in prioritizing the images for further professional screening.
+10. Limitations of the System
+The proposed system has certain drawbacks:
+Data Dependency
+: The model's performance is dependent on the properties of the training set.
+2.
+Class imbalance
+: There can be a smaller number of images per category for some severe DR categories, which can impact prediction performance.
+3.
+Generalization issues
+: The model may not perform the same for images of the retina taken by different cameras, different demographics, or different clinical situations.
+No substitute for doctors: The system is not a substitute for an ophthalmologist or clinical exam.
+5.
+Clinical validation required
+: The prototype is suitable for academic/research screening and will need to be clinically validated before it can be used in the medical field.
+11. Future Enhancements
+There are additional enhancements that can be made to the project:
+Training with a wider and larger range of multiple data sources.
+Benchmarking the performance of various architectures of Deep Learning like EfficientNetV2, ResNet, Vision Transformers.
+Diagnosis of some eye diseases of the retina.
+Adding automatic image quality assessment of retina.
+How to make Android and iOS Applications.
+•
+Supporting multiple languages.
+•
+Improving Grad-CAM and other explainability techniques.
+Carrying out prospective clinical validation.
+System integration with the healthcare information system, following proper clinical & regulatory validation.
+12. Conclusion
+Diabetic Retinopathy Screening Using Deep Learning project aims to develop an AI-powered tool for analysis of the fundus images of retina and categorize them according to the severity of DR.
+The project will consist of Python, Computer Vision, Deep Learning, Transfer Learning, Explainable AI, and Streamlit to create an end-to-end screening app. EfficientNetB0 is used for image classification and Grad-CAM is used for a visual explanation of the models' predictions.
+The project demonstrates how Deep Learning can be applied to automating the screening process for retinal images and emphasizes that this is a prototype academic/research system and not medical diagnosis.
+13. Bibliography
+1. Gulshan, V. et al. (2016). Development and validation of deep machine learning algorithm for DR detection in retinal fundus photographs. JAMA.
+2. Jiang, H. et al. (2020). Interpretable Grad-CAM for A Multi-Label Deep Learning Model for Diabetic Retinopathy Classifications. IEEE EMBC.
+3. Anand, V. A. et al. (2024). Fine-Tuned EfficientNetB0 Based Smart Grading of Diabetic Retinopathy. Renting the book.The book is on rent.
+4. Gulshan, V. et al. (2019). The study compares the performance of the Deep-Learning Algorithm with manual grading in DR Detection in India.The study compares the performance of the Deep-Learning Algorithm with manual grading in DR Detection in India. JAMA Ophthalmology.
+5. LeCun, Y., Bengio, Y., & Hinton, G. (2015). *Deep Learning*. Nature
