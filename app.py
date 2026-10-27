@@ -805,15 +805,7 @@ if __name__ == "__main__":
         # If user runs 'python app.py' in terminal, automatically launch the Streamlit server
         sys.argv = ["streamlit", "run", sys.argv[0]]
         sys.exit(stcli.main())
+    else:
+        main()
 
-# Export top-level application aliases for WSGI/ASGI/Serverless runtimes (Vercel, Gunicorn, Lambda)
-try:
-    from api import app as _api_app
-    app = _api_app
-    application = _api_app
-    handler = _api_app
-except Exception:
-    app = None
-    application = None
-    handler = None
 
