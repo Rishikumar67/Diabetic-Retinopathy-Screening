@@ -28,13 +28,19 @@
 
       <nav>
         <ul class="nav-links">
-          <li><a href="#screening" class="nav-link active">Screening Lab</a></li>
-          <li><a href="#explainable" class="nav-link">Explainable AI</a></li>
-          <li><a href="#dataset" class="nav-link">Dataset & Benchmarks</a></li>
-          <li><a href="#report" class="nav-link">Clinical Report</a></li>
-          <li><a href="#synopsis" class="nav-link">Synopsis Index</a></li>
+          <li><a href="#screening" class="nav-link active" data-section="screening">Screening Lab</a></li>
+          <li><a href="#explainable" class="nav-link" data-section="explainable">Explainable AI</a></li>
+          <li><a href="#dataset" class="nav-link" data-section="dataset">Dataset & Benchmarks</a></li>
+          <li><a href="#report" class="nav-link" data-section="report">Clinical Report</a></li>
+          <li><a href="#synopsis" class="nav-link" data-section="synopsis">Synopsis Index</a></li>
         </ul>
       </nav>
+
+      <div class="current-panel-badge" id="currentPanelBadge" title="Current Active Section / Panel">
+        <span class="panel-dot"></span>
+        <span class="panel-label">Panel:</span>
+        <strong id="currentPanelText">Screening Lab</strong>
+      </div>
 
       <div class="nav-badge">
         <span class="status-dot"></span>
@@ -525,9 +531,18 @@
       </div>
 
       <!-- Patient Information Inputs Card -->
-      <div class="card" id="patientFormCard" style="max-width: 800px; margin: 0 auto 24px;">
-        <h3 class="card-title" style="margin-bottom: 14px;">👤 Patient Information & Clinical Details</h3>
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px;">
+      <div class="card" id="patientFormCard" style="max-width: 860px; margin: 0 auto 24px; border: 1px solid rgba(6, 182, 212, 0.3); box-shadow: 0 4px 20px rgba(0,0,0,0.25);">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+          <div>
+            <h3 class="card-title" style="margin-bottom: 2px;">👤 Patient Information & Clinical Details</h3>
+            <div style="font-size: 0.8rem; color: var(--text-muted);">Fill in patient specifics below — report below auto-updates in real time!</div>
+          </div>
+          <button type="button" class="sample-chip" onclick="generateRandomMRN()" style="font-size: 0.76rem; padding: 4px 10px;" title="Generate a fresh patient MRN identifier">
+            🎲 New MRN ID
+          </button>
+        </div>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px;">
           <div>
             <label style="font-size: 0.78rem; font-weight: 600; color: var(--text-dim); text-transform: uppercase;">Patient Full Name</label>
             <input type="text" id="inputPatientName" class="filter-btn" style="width: 100%; margin-top: 4px; padding: 10px 14px; text-align: left; background: var(--bg-secondary);" value="Rishi Kumar" placeholder="e.g. Rishi Kumar">
@@ -541,9 +556,37 @@
             <input type="text" id="inputPatientId" class="filter-btn" style="width: 100%; margin-top: 4px; padding: 10px 14px; text-align: left; background: var(--bg-secondary);" value="PID-DR-2026-0842">
           </div>
           <div>
-            <label style="font-size: 0.78rem; font-weight: 600; color: var(--text-dim); text-transform: uppercase;">Age & Gender</label>
-            <input type="text" id="inputAgeGender" class="filter-btn" style="width: 100%; margin-top: 4px; padding: 10px 14px; text-align: left; background: var(--bg-secondary);" value="23 Yrs / Male">
+            <label style="font-size: 0.78rem; font-weight: 600; color: var(--text-dim); text-transform: uppercase;">Age</label>
+            <input type="text" id="inputAge" class="filter-btn" style="width: 100%; margin-top: 4px; padding: 10px 14px; text-align: left; background: var(--bg-secondary);" value="23 Yrs" placeholder="e.g. 23 Yrs">
           </div>
+          <div>
+            <label style="font-size: 0.78rem; font-weight: 600; color: var(--text-dim); text-transform: uppercase;">Gender</label>
+            <select id="selectGender" class="filter-btn" style="width: 100%; margin-top: 4px; padding: 10px 14px; text-align: left; background: var(--bg-secondary); color: var(--text-main);">
+              <option value="Male" selected>Male</option>
+              <option value="Female">Female</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+          <div>
+            <label style="font-size: 0.78rem; font-weight: 600; color: var(--text-dim); text-transform: uppercase;">Examining Clinician</label>
+            <input type="text" id="inputClinician" class="filter-btn" style="width: 100%; margin-top: 4px; padding: 10px 14px; text-align: left; background: var(--bg-secondary);" value="Dr. Rishi Kumar (Optometrist / Clinician)" placeholder="Examiner name">
+          </div>
+          <div style="grid-column: span 2;">
+            <label style="font-size: 0.78rem; font-weight: 600; color: var(--text-dim); text-transform: uppercase;">Clinical Notes / Medical History</label>
+            <input type="text" id="inputClinicalNotes" class="filter-btn" style="width: 100%; margin-top: 4px; padding: 10px 14px; text-align: left; background: var(--bg-secondary);" value="Type-2 Diabetes annual review. Best corrected visual acuity 6/6 OU. No floaters." placeholder="Clinical notes, diabetes duration, HbA1c...">
+          </div>
+        </div>
+
+        <div style="display: flex; gap: 12px; margin-top: 18px; align-items: center; flex-wrap: wrap;">
+          <button type="button" class="btn" id="btnUpdateReport" onclick="generateReportFromForm()" style="padding: 10px 22px;">
+            ⚡ Update & Generate Report
+          </button>
+          <button type="button" class="btn btn-secondary" onclick="resetPatientForm()" style="padding: 10px 18px;">
+            🔄 Reset Form
+          </button>
+          <span id="syncToast" style="display: none; color: #10B981; font-weight: 700; font-size: 0.88rem; align-items: center; gap: 6px;">
+            ✅ Report Synchronized in Real-Time!
+          </span>
         </div>
       </div>
 
@@ -564,11 +607,13 @@
           <div class="report-item"><strong>Patient Name:</strong> <span id="repPatientName" style="color:#0F172A; font-weight:700;">Rishi Kumar</span></div>
           <div class="report-item"><strong>Contact No:</strong> <span id="repContactNumber" style="color:#0F172A; font-weight:700;">8825368714</span></div>
           <div class="report-item"><strong>Patient ID:</strong> <span id="repPatientId">PID-DR-2026-0842</span></div>
-          <div class="report-item"><strong>Age / Gender:</strong> <span id="repAgeGender">54 Yrs / Male</span></div>
+          <div class="report-item"><strong>Age / Gender:</strong> <span id="repAgeGender">23 Yrs / Male</span></div>
           <div class="report-item"><strong>Exam File:</strong> <span id="repFile">images/MAPLES_test_20051020_44923_0100_PP.jpg</span></div>
           <div class="report-item"><strong>Image Quality:</strong> Passed Quality Verification (Focus: 182.4)</div>
           <div class="report-item"><strong>Vessel Density:</strong> <span id="vesselDensityVal2">11.4%</span> of retinal field</div>
+          <div class="report-item"><strong>Clinician:</strong> <span id="repClinician">Dr. Rishi Kumar (Optometrist / Clinician)</span></div>
           <div class="report-item"><strong>Assessment Date:</strong> <span id="repDate2">2026-10-27</span></div>
+          <div class="report-item" style="grid-column: span 2;"><strong>Clinical Notes:</strong> <span id="repNotes">Type-2 Diabetes annual review. Best corrected visual acuity 6/6 OU. No floaters.</span></div>
         </div>
 
         <div class="report-finding">

@@ -577,28 +577,104 @@ function setupPatientInputs() {
   const nameInput = document.getElementById('inputPatientName');
   const contactInput = document.getElementById('inputContactNumber');
   const idInput = document.getElementById('inputPatientId');
-  const ageGenderInput = document.getElementById('inputAgeGender');
+  const ageInput = document.getElementById('inputAge');
+  const genderSelect = document.getElementById('selectGender');
+  const clinicianInput = document.getElementById('inputClinician');
+  const notesInput = document.getElementById('inputClinicalNotes');
 
-  if (nameInput) {
-    nameInput.addEventListener('input', (e) => {
-      document.getElementById('repPatientName').innerText = e.target.value.trim() || 'Anonymous Patient';
-    });
-  }
-  if (contactInput) {
-    contactInput.addEventListener('input', (e) => {
-      document.getElementById('repContactNumber').innerText = e.target.value.trim() || 'Not Provided';
-    });
-  }
+  const sync = () => {
+    syncPatientReportValues();
+  };
+
+  [nameInput, contactInput, idInput, ageInput, genderSelect, clinicianInput, notesInput].forEach(el => {
+    if (el) {
+      el.addEventListener('input', sync);
+      el.addEventListener('change', sync);
+    }
+  });
+
+  // Initial sync immediately on load
+  syncPatientReportValues();
+}
+
+// Synchronize all form fields into the printable report paper
+function syncPatientReportValues() {
+  const name = document.getElementById('inputPatientName')?.value.trim() || 'Rishi Kumar';
+  const contact = document.getElementById('inputContactNumber')?.value.trim() || '8825368714';
+  const id = document.getElementById('inputPatientId')?.value.trim() || 'PID-DR-2026-0842';
+  const age = document.getElementById('inputAge')?.value.trim() || '23 Yrs';
+  const gender = document.getElementById('selectGender')?.value || 'Male';
+  const clinician = document.getElementById('inputClinician')?.value.trim() || 'Dr. Rishi Kumar (Optometrist / Clinician)';
+  const notes = document.getElementById('inputClinicalNotes')?.value.trim() || 'Type-2 Diabetes annual review. Best corrected visual acuity 6/6 OU. No floaters.';
+
+  const repName = document.getElementById('repPatientName');
+  const repContact = document.getElementById('repContactNumber');
+  const repId = document.getElementById('repPatientId');
+  const repAgeGender = document.getElementById('repAgeGender');
+  const repClinician = document.getElementById('repClinician');
+  const repNotes = document.getElementById('repNotes');
+
+  if (repName) repName.innerText = name;
+  if (repContact) repContact.innerText = contact;
+  if (repId) repId.innerText = id;
+  if (repAgeGender) repAgeGender.innerText = `${age} / ${gender}`;
+  if (repClinician) repClinician.innerText = clinician;
+  if (repNotes) repNotes.innerText = notes;
+}
+
+// Generate a random MRN identifier
+function generateRandomMRN() {
+  const randNum = Math.floor(1000 + Math.random() * 9000);
+  const newId = `PID-DR-2026-${randNum}`;
+  const idInput = document.getElementById('inputPatientId');
   if (idInput) {
-    idInput.addEventListener('input', (e) => {
-      document.getElementById('repPatientId').innerText = e.target.value.trim() || 'N/A';
-    });
+    idInput.value = newId;
+    syncPatientReportValues();
   }
-  if (ageGenderInput) {
-    ageGenderInput.addEventListener('input', (e) => {
-      document.getElementById('repAgeGender').innerText = e.target.value.trim() || 'N/A';
-    });
+}
+
+// User-triggered Generate & Update Report button
+function generateReportFromForm() {
+  syncPatientReportValues();
+  
+  // Highlight animation on report paper
+  const reportPaper = document.getElementById('reportPaper');
+  if (reportPaper) {
+    reportPaper.classList.remove('highlight-pulse');
+    void reportPaper.offsetWidth; // trigger reflow
+    reportPaper.classList.add('highlight-pulse');
+    reportPaper.scrollIntoView({ behavior: 'smooth', block: 'center' });
   }
+
+  // Toast feedback
+  const toast = document.getElementById('syncToast');
+  if (toast) {
+    toast.style.display = 'inline-flex';
+    setTimeout(() => {
+      toast.style.display = 'none';
+    }, 3000);
+  }
+}
+
+// Reset patient form to standard defaults
+function resetPatientForm() {
+  const nameInput = document.getElementById('inputPatientName');
+  const contactInput = document.getElementById('inputContactNumber');
+  const idInput = document.getElementById('inputPatientId');
+  const ageInput = document.getElementById('inputAge');
+  const genderSelect = document.getElementById('selectGender');
+  const clinicianInput = document.getElementById('inputClinician');
+  const notesInput = document.getElementById('inputClinicalNotes');
+
+  if (nameInput) nameInput.value = 'Rishi Kumar';
+  if (contactInput) contactInput.value = '8825368714';
+  if (idInput) idInput.value = 'PID-DR-2026-0842';
+  if (ageInput) ageInput.value = '23 Yrs';
+  if (genderSelect) genderSelect.value = 'Male';
+  if (clinicianInput) clinicianInput.value = 'Dr. Rishi Kumar (Optometrist / Clinician)';
+  if (notesInput) notesInput.value = 'Type-2 Diabetes annual review. Best corrected visual acuity 6/6 OU. No floaters.';
+
+  syncPatientReportValues();
 }
 
 // Update Report Details
@@ -609,15 +685,7 @@ function updateReportUI(customFileName) {
   if (dateEl) dateEl.innerText = dateStr;
   if (dateEl2) dateEl2.innerText = dateStr;
 
-  const nameInput = document.getElementById('inputPatientName');
-  const contactInput = document.getElementById('inputContactNumber');
-  const idInput = document.getElementById('inputPatientId');
-  const ageGenderInput = document.getElementById('inputAgeGender');
-
-  if (nameInput) document.getElementById('repPatientName').innerText = nameInput.value.trim() || 'Rishi Kumar';
-  if (contactInput) document.getElementById('repContactNumber').innerText = contactInput.value.trim() || '8825368714';
-  if (idInput) document.getElementById('repPatientId').innerText = idInput.value.trim() || 'PID-DR-2026-0842';
-  if (ageGenderInput) document.getElementById('repAgeGender').innerText = ageGenderInput.value.trim() || '23 Yrs / Male';
+  syncPatientReportValues();
 
   document.getElementById('repFile').innerText = customFileName || currentCase.imagePath;
   document.getElementById('repStage').innerText = `Grade ${currentCase.grade}: ${currentCase.stage}`;
@@ -693,7 +761,82 @@ function printReport() {
   window.print();
 }
 
-// Attach setupPatientInputs on DOMContentLoaded
+// Navigation & ScrollSpy Engine
+function initScrollSpyAndNavigation() {
+  const navLinks = document.querySelectorAll('.nav-link');
+  const panelText = document.getElementById('currentPanelText');
+  
+  const sectionNames = {
+    'home': 'Overview',
+    'screening': 'Screening Lab',
+    'explainable': 'Explainable AI',
+    'dataset': 'Dataset & Benchmarks',
+    'report': 'Clinical Report',
+    'synopsis': 'Synopsis Index'
+  };
+
+  // Click handler for smooth scrolling & immediate active switch
+  navLinks.forEach(link => {
+    link.addEventListener('click', (e) => {
+      const targetId = link.getAttribute('href').replace('#', '');
+      const targetEl = document.getElementById(targetId);
+      if (targetEl) {
+        e.preventDefault();
+        navLinks.forEach(l => l.classList.remove('active'));
+        link.classList.add('active');
+        if (panelText && sectionNames[targetId]) {
+          panelText.innerText = sectionNames[targetId];
+        }
+        targetEl.scrollIntoView({ behavior: 'smooth' });
+      }
+    });
+  });
+
+  // ScrollSpy using window scroll position
+  const sectionIds = ['synopsis', 'report', 'dataset', 'explainable', 'screening'];
+  const sections = sectionIds.map(id => document.getElementById(id)).filter(Boolean);
+
+  let ticking = false;
+  window.addEventListener('scroll', () => {
+    if (!ticking) {
+      window.requestAnimationFrame(() => {
+        const scrollPosition = window.scrollY + 200;
+        let currentSectionId = 'screening';
+
+        for (const section of sections) {
+          const top = section.offsetTop;
+          const height = section.offsetHeight;
+          if (scrollPosition >= top && scrollPosition < top + height) {
+            currentSectionId = section.id;
+            break;
+          }
+        }
+
+        // Update active class
+        navLinks.forEach(link => {
+          const href = link.getAttribute('href').replace('#', '');
+          if (href === currentSectionId) {
+            link.classList.add('active');
+          } else {
+            link.classList.remove('active');
+          }
+        });
+
+        // Update panel text indicator
+        if (panelText && sectionNames[currentSectionId]) {
+          panelText.innerText = sectionNames[currentSectionId];
+        }
+
+        ticking = false;
+      });
+      ticking = true;
+    }
+  }, { passive: true });
+}
+
+// Attach all initializers on DOMContentLoaded
 document.addEventListener('DOMContentLoaded', () => {
   setupPatientInputs();
+  initScrollSpyAndNavigation();
 });
+
