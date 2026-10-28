@@ -154,7 +154,7 @@ document.addEventListener('DOMContentLoaded', () => {
   setupFilters();
   setupGradcamSlider();
   setupLesionToggles();
-  loadAndPredictImage('images/MAPLES_test_20051020_44923_0100_PP.jpg', 'Patient Scan #1');
+  loadCase(0);
 });
 
 // Setup sample preset chips
@@ -164,40 +164,29 @@ function setupSampleChips() {
     chip.addEventListener('click', () => {
       chips.forEach(c => c.classList.remove('active'));
       chip.classList.add('active');
-      const imgPath = chip.getAttribute('data-img');
-      const label = chip.getAttribute('title') || 'Patient Scan';
-      if (imgPath) {
-        loadAndPredictImage(imgPath, label);
+      const gradeAttr = chip.getAttribute('data-grade');
+      if (gradeAttr !== null) {
+        const grade = parseInt(gradeAttr, 10);
+        loadCase(grade);
       }
     });
   });
 }
 
-// Load a clinical fundus image and automatically predict its grade
-function loadAndPredictImage(src, filename) {
+// Load a clinical benchmark case
+function loadCase(grade) {
+  currentCase = PRESET_CASES[grade] || PRESET_CASES[0];
   const img = new Image();
   img.crossOrigin = "anonymous";
   img.onload = () => {
     currentLoadedImage = img;
     renderImage();
-    const metrics = calculateCanvasQuality();
-    updateQualityMetrics(metrics.blur, metrics.brightness, metrics.contrast);
-
-    // Automated Multi-Stage Lesion & Severity Screening
-    const diagnosis = analyzeUploadedFundus(ctxFundus.getImageData(0, 0, 512, 512), metrics);
-    currentCase = {
-      ...PRESET_CASES[diagnosis.grade],
-      ...diagnosis,
-      blurScore: metrics.blur,
-      brightness: metrics.brightness,
-      contrast: metrics.contrast
-    };
-
+    updateQualityMetrics(currentCase.blurScore, currentCase.brightness, currentCase.contrast);
     updateDiagnosisUI(currentCase);
     renderOverlays();
-    updateReportUI(filename);
+    updateReportUI();
   };
-  img.src = src;
+  img.src = currentCase.imagePath;
 }
 
 // Render image on canvas with selected filter

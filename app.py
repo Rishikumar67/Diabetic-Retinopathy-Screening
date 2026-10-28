@@ -171,11 +171,19 @@ def main():
         st.markdown("### 1. Retinal Fundus Image Input")
         st.markdown("Upload any patient fundus scan for fully automated deep learning grading.")
 
+        col_input_mode, col_options = st.columns([1, 2])
+        with col_input_mode:
+            input_mode = st.radio(
+                "Select Input Source:",
+                ["Browse Sample from Dataset", "Upload Retinal Image"],
+                horizontal=False
+            )
+
         active_img_rgb = None
+        active_meta = None
         sample_filename = ""
 
-        col_up, col_smpl = st.columns([1.6, 1.4])
-        with col_up:
+        if input_mode == "Upload Retinal Image":
             uploaded_file = st.file_uploader(
                 "Upload a Retinal Fundus Photograph (.jpg, .jpeg, .png, .tif):",
                 type=["jpg", "jpeg", "png", "tif", "tiff"],
@@ -185,27 +193,30 @@ def main():
                 bytes_data = uploaded_file.read()
                 active_img_rgb = load_image(bytes_data)
                 sample_filename = uploaded_file.name
-
-        with col_smpl:
-            st.markdown("**Or test with an anonymous patient scan:**")
+        else:
             if catalog_df is not None:
-                sample_options = catalog_df["image_file"].sample(frac=1, random_state=42).tolist()[:30]
-                chosen_sample = st.selectbox(
-                    "Choose an Anonymous Patient Scan to Test:",
-                    sample_options,
-                    index=0,
-                    help="Select any retinal image. The AI model will analyze it and predict its grade automatically."
-                )
-                if st.button("🔍 Load & Analyze Patient Scan", width="stretch"):
-                    row = catalog_df[catalog_df["image_file"] == chosen_sample].iloc[0]
-                    active_img_rgb = load_image(row["image_path"])
-                    sample_filename = chosen_sample
-                    st.session_state["active_sample_img"] = active_img_rgb
-                    st.session_state["active_sample_name"] = sample_filename
-
-            if active_img_rgb is None and "active_sample_img" in st.session_state:
-                active_img_rgb = st.session_state["active_sample_img"]
-                sample_filename = st.session_state.get("active_sample_name", "")
+                with col_options:
+                    class_choices = {
+                        "Grade 0: Normal / Healthy Retina (No DR)": 0,
+                        "Grade 1: Mild DR (Early Microaneurysms)": 1,
+                        "Grade 2: Moderate DR (Hard Exudates & Hemorrhages)": 2,
+                        "Grade 3: Severe DR (Cotton Wool Soft Exudates)": 3,
+                        "Grade 4: Proliferative DR (Neovascularization)": 4
+                    }
+                    selected_class_label = st.selectbox(
+                        "Browse Cohort Severity Spectrum:",
+                        list(class_choices.keys())
+                    )
+                    selected_grade = class_choices[selected_class_label]
+                    grade_samples = catalog_df[catalog_df["dr_grade"] == selected_grade]
+                    
+                    if len(grade_samples) > 0:
+                        sample_options = grade_samples["image_file"].tolist()
+                        chosen_file = st.selectbox("Select Patient Sample Image:", sample_options[:25])
+                        row = grade_samples[grade_samples["image_file"] == chosen_file].iloc[0]
+                        active_meta = row.to_dict()
+                        sample_filename = chosen_file
+                        active_img_rgb = load_image(row["image_path"])
 
         st.markdown("---")
 
