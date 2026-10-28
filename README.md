@@ -117,18 +117,26 @@ run_app.bat
 ```
 This automatically invokes the environment and opens the web application at `http://localhost:8501`.
 
-### Option B: Terminal Command
+### Option B: Terminal Command (Interactive Streamlit Dashboard)
 ```bash
 # Activate virtual environment and launch Streamlit
 .\.venv\Scripts\python.exe -m streamlit run app.py
 ```
+*Features automated fundus upload, blind AI classification, and Grad-CAM saliency heatmaps.*
 
-### Option C: Running the Model Training Script
+### Option C: Comprehensive Performance Audit
 ```bash
-.\.venv\Scripts\python.exe train.py --epochs 5 --batch_size 16
+# Run full multiclass and clinical screening evaluation across all 591 cohort samples
+.\.venv\Scripts\python.exe scripts/audit_model_performance.py
 ```
 
-### Option D: Running the Jupyter Notebook
+### Option D: Verification Test Suite
+```bash
+# Validate calibrated hybrid inference on test images
+.\.venv\Scripts\python.exe scripts/verify_model.py
+```
+
+### Option E: Running the Jupyter Notebook
 Open `Diabetic_Retinopathy.ipynb` in VS Code or Jupyter Lab and execute cells sequentially.
 
 ---
