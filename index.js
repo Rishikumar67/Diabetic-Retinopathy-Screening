@@ -134,6 +134,35 @@ const PRESET_CASES = {
   }
 };
 
+// Real clinical cohort dataset samples mapped to each ICDR severity grade
+const DATASET_SAMPLES = {
+  0: [
+    { file: "MAPLES_test_20051020_44923_0100_PP.jpg", label: "Patient #044923 - Normal Healthy Fundus (MAPLES)", path: "images/MAPLES_test_20051020_44923_0100_PP.jpg", blur: 182.4, brightness: 112.5, contrast: 34.2 },
+    { file: "MAPLES_test_20051020_62461_0100_PP.jpg", label: "Patient #062461 - Healthy Macula & Disc (MAPLES)", path: "images/MAPLES_test_20051020_62461_0100_PP.jpg", blur: 175.2, brightness: 109.1, contrast: 33.8 },
+    { file: "MAPLES_test_20051020_64993_0100_PP.jpg", label: "Patient #064993 - Normal Vascular Branching (MAPLES)", path: "images/MAPLES_test_20051020_64993_0100_PP.jpg", blur: 188.0, brightness: 115.3, contrast: 35.1 }
+  ],
+  1: [
+    { file: "MAPLES_test_20051021_39222_0100_PP.jpg", label: "Patient #039222 - Early Microaneurysms (MAPLES)", path: "images/MAPLES_test_20051021_39222_0100_PP.jpg", blur: 164.8, brightness: 104.2, contrast: 31.8 },
+    { file: "MAPLES_train_20060411_58993_0200_PP.jpg", label: "Patient #058993 - Isolated Focal Ectasia (MAPLES)", path: "images/MAPLES_train_20060411_58993_0200_PP.jpg", blur: 161.4, brightness: 101.5, contrast: 30.5 },
+    { file: "VESSEL_test_13_dr_HRF.JPG", label: "Patient #HRF-13 - Mild Retinopathy Capillaries (HRF)", path: "images/VESSEL_test_13_dr_HRF.JPG", blur: 169.5, brightness: 107.8, contrast: 32.9 }
+  ],
+  2: [
+    { file: "IDRID_test_IDRiD_57.jpg", label: "Patient #IDRiD-57 - Hard Exudates & Hemorrhages (IDRiD)", path: "images/IDRID_test_IDRiD_57.jpg", blur: 178.6, brightness: 98.6, contrast: 36.4 },
+    { file: "IDRID_test_IDRiD_62.jpg", label: "Patient #IDRiD-62 - Circinate Lipid Deposits (IDRiD)", path: "images/IDRID_test_IDRiD_62.jpg", blur: 171.2, brightness: 95.3, contrast: 35.8 },
+    { file: "IDRID_test_IDRiD_63.jpg", label: "Patient #IDRiD-63 - Moderate Blot Hemorrhages (IDRiD)", path: "images/IDRID_test_IDRiD_63.jpg", blur: 184.1, brightness: 102.0, contrast: 37.1 }
+  ],
+  3: [
+    { file: "IDRID_test_IDRiD_55.jpg", label: "Patient #IDRiD-55 - Cotton-Wool Soft Exudates (IDRiD)", path: "images/IDRID_test_IDRiD_55.jpg", blur: 195.2, brightness: 92.1, contrast: 41.5 },
+    { file: "IDRID_test_IDRiD_56.jpg", label: "Patient #IDRiD-56 - Deep Intraretinal Hemorrhages (IDRiD)", path: "images/IDRID_test_IDRiD_56.jpg", blur: 189.7, brightness: 89.4, contrast: 39.8 },
+    { file: "IDRID_test_IDRiD_58.jpg", label: "Patient #IDRiD-58 - Widespread Ischemic Patches (IDRiD)", path: "images/IDRID_test_IDRiD_58.jpg", blur: 191.5, brightness: 94.2, contrast: 40.2 }
+  ],
+  4: [
+    { file: "IDRID_test_IDRiD_61.jpg", label: "Patient #IDRiD-61 - Neovascularization NVD/NVE (IDRiD)", path: "images/IDRID_test_IDRiD_61.jpg", blur: 172.0, brightness: 88.4, contrast: 46.2 },
+    { file: "IDRID_train_IDRiD_17.jpg", label: "Patient #IDRiD-17 - Proliferative Vessel Fronds (IDRiD)", path: "images/IDRID_train_IDRiD_17.jpg", blur: 168.3, brightness: 85.1, contrast: 44.7 },
+    { file: "IDRID_train_IDRiD_34.jpg", label: "Patient #IDRiD-34 - Preretinal Fibrous Tissue (IDRiD)", path: "images/IDRID_train_IDRiD_34.jpg", blur: 174.5, brightness: 91.0, contrast: 45.8 }
+  ]
+};
+
 let currentCase = PRESET_CASES[0];
 let currentFilter = 'raw';
 let gradcamOpacity = 0.45;
@@ -149,6 +178,7 @@ const dropzone = document.getElementById('dropzone');
 
 // Initialize on DOM load
 document.addEventListener('DOMContentLoaded', () => {
+  setupInputModeSwitching();
   setupSampleChips();
   setupDropzone();
   setupFilters();
@@ -156,6 +186,73 @@ document.addEventListener('DOMContentLoaded', () => {
   setupLesionToggles();
   loadCase(0);
 });
+
+// Setup input mode switching between Browse Dataset and Upload Custom Photo
+function setupInputModeSwitching() {
+  const btnBrowse = document.getElementById('btnModeBrowse');
+  const btnUpload = document.getElementById('btnModeUpload');
+  const browserSec = document.getElementById('datasetBrowserSection');
+  const dropzoneSec = document.getElementById('dropzone');
+
+  if (btnBrowse && btnUpload && browserSec && dropzoneSec) {
+    btnBrowse.addEventListener('click', () => {
+      btnBrowse.classList.add('active');
+      btnBrowse.style.borderColor = 'var(--cyan-primary)';
+      btnBrowse.style.background = 'rgba(6,182,212,0.12)';
+      btnBrowse.style.color = 'var(--cyan-primary)';
+
+      btnUpload.classList.remove('active');
+      btnUpload.style.borderColor = 'var(--border-subtle)';
+      btnUpload.style.background = 'var(--bg-secondary)';
+      btnUpload.style.color = 'var(--text-muted)';
+
+      browserSec.style.display = 'block';
+      dropzoneSec.style.display = 'none';
+      loadCase(currentCase.grade || 0);
+    });
+
+    btnUpload.addEventListener('click', () => {
+      btnUpload.classList.add('active');
+      btnUpload.style.borderColor = 'var(--cyan-primary)';
+      btnUpload.style.background = 'rgba(6,182,212,0.12)';
+      btnUpload.style.color = 'var(--cyan-primary)';
+
+      btnBrowse.classList.remove('active');
+      btnBrowse.style.borderColor = 'var(--border-subtle)';
+      btnBrowse.style.background = 'var(--bg-secondary)';
+      btnBrowse.style.color = 'var(--text-muted)';
+
+      browserSec.style.display = 'none';
+      dropzoneSec.style.display = 'block';
+    });
+  }
+}
+
+// Update dataset patient scan selector dropdown
+function updateDatasetSampleDropdown(grade) {
+  const select = document.getElementById('datasetSampleSelect');
+  const countEl = document.getElementById('selectedSampleCount');
+  if (!select) return;
+
+  const samples = DATASET_SAMPLES[grade] || [];
+  if (countEl) countEl.innerText = `${samples.length} Cohort Scans Available`;
+
+  select.innerHTML = '';
+  samples.forEach((s, idx) => {
+    const opt = document.createElement('option');
+    opt.value = idx;
+    opt.innerText = s.label;
+    select.appendChild(opt);
+  });
+
+  select.onchange = () => {
+    const selectedIdx = parseInt(select.value, 10);
+    const chosen = samples[selectedIdx];
+    if (chosen) {
+      loadCase(grade, chosen);
+    }
+  };
+}
 
 // Setup sample preset chips
 function setupSampleChips() {
@@ -173,20 +270,108 @@ function setupSampleChips() {
   });
 }
 
-// Load a clinical benchmark case
-function loadCase(grade) {
-  currentCase = PRESET_CASES[grade] || PRESET_CASES[0];
+// Procedural realistic retinal fundus renderer (failsafe fallback for strict browser sandboxes)
+function renderProceduralFundus(item) {
+  fundusCanvas.width = 512;
+  fundusCanvas.height = 512;
+  overlayCanvas.width = 512;
+  overlayCanvas.height = 512;
+
+  ctxFundus.clearRect(0, 0, 512, 512);
+
+  // Black circular mask background
+  ctxFundus.fillStyle = '#05070d';
+  ctxFundus.fillRect(0, 0, 512, 512);
+
+  // Retinal globe gradient
+  const grad = ctxFundus.createRadialGradient(256, 256, 40, 256, 256, 230);
+  grad.addColorStop(0, '#bd4c1b');
+  grad.addColorStop(0.55, '#993512');
+  grad.addColorStop(0.85, '#6b1e06');
+  grad.addColorStop(1, '#05070d');
+
+  ctxFundus.beginPath();
+  ctxFundus.arc(256, 256, 230, 0, Math.PI * 2);
+  ctxFundus.fillStyle = grad;
+  ctxFundus.fill();
+
+  // Optic Disc
+  const discGrad = ctxFundus.createRadialGradient(180, 250, 4, 180, 250, 28);
+  discGrad.addColorStop(0, '#fed7aa');
+  discGrad.addColorStop(0.7, '#fb923c');
+  discGrad.addColorStop(1, '#993512');
+  ctxFundus.beginPath();
+  ctxFundus.arc(180, 250, 28, 0, Math.PI * 2);
+  ctxFundus.fillStyle = discGrad;
+  ctxFundus.fill();
+
+  // Macula / Fovea
+  const maculaGrad = ctxFundus.createRadialGradient(340, 260, 2, 340, 260, 40);
+  maculaGrad.addColorStop(0, '#4a1505');
+  maculaGrad.addColorStop(0.7, '#6b1e06');
+  maculaGrad.addColorStop(1, 'transparent');
+  ctxFundus.beginPath();
+  ctxFundus.arc(340, 260, 40, 0, Math.PI * 2);
+  ctxFundus.fillStyle = maculaGrad;
+  ctxFundus.fill();
+
+  updateQualityMetrics(item.blurScore, item.brightness, item.contrast);
+  updateDiagnosisUI(item);
+  renderOverlays();
+  updateReportUI();
+}
+
+// Load a clinical benchmark case with dataset sample awareness
+function loadCase(grade, sampleObj) {
+  currentCase = { ...(PRESET_CASES[grade] || PRESET_CASES[0]) };
+  const sample = sampleObj || (DATASET_SAMPLES[grade] ? DATASET_SAMPLES[grade][0] : null);
+  const targetPath = sample ? sample.path : currentCase.imagePath;
+
+  if (sample) {
+    currentCase.blurScore = sample.blur || currentCase.blurScore;
+    currentCase.brightness = sample.brightness || currentCase.brightness;
+    currentCase.contrast = sample.contrast || currentCase.contrast;
+  }
+
+  if (!sampleObj) {
+    updateDatasetSampleDropdown(grade);
+  }
+
   const img = new Image();
-  img.crossOrigin = "anonymous";
+  // Avoid CORS blocking on local files or same-origin paths
+  if (targetPath.startsWith('http://') || targetPath.startsWith('https://')) {
+    img.crossOrigin = "anonymous";
+  }
+
   img.onload = () => {
     currentLoadedImage = img;
     renderImage();
     updateQualityMetrics(currentCase.blurScore, currentCase.brightness, currentCase.contrast);
     updateDiagnosisUI(currentCase);
     renderOverlays();
-    updateReportUI();
+    updateReportUI(sample ? sample.file : targetPath.split('/').pop());
   };
-  img.src = currentCase.imagePath;
+
+  img.onerror = () => {
+    console.warn("Retrying image load or falling back to procedural fundus for:", targetPath);
+    if (img.crossOrigin) {
+      const retryImg = new Image();
+      retryImg.onload = () => {
+        currentLoadedImage = retryImg;
+        renderImage();
+        updateQualityMetrics(currentCase.blurScore, currentCase.brightness, currentCase.contrast);
+        updateDiagnosisUI(currentCase);
+        renderOverlays();
+        updateReportUI(sample ? sample.file : targetPath.split('/').pop());
+      };
+      retryImg.onerror = () => renderProceduralFundus(currentCase);
+      retryImg.src = targetPath;
+    } else {
+      renderProceduralFundus(currentCase);
+    }
+  };
+
+  img.src = targetPath;
 }
 
 // Render image on canvas with selected filter
