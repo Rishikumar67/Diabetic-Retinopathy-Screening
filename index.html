@@ -84,34 +84,31 @@
           <span class="academic-pill" style="margin-bottom: 0;">Canvas Engine</span>
         </div>
 
-        <!-- Sample Selector Presets -->
-        <div class="sample-bar">
-          <div class="sample-bar-label">Curated Dataset Samples (ICDR 5-Class Spectrum)</div>
-          <div class="sample-chips">
-            <button class="sample-chip active" data-grade="0">
-              <span class="chip-dot" style="background:#10B981;"></span> Grade 0: No DR
-            </button>
-            <button class="sample-chip" data-grade="1">
-              <span class="chip-dot" style="background:#38BDF8;"></span> Grade 1: Mild DR
-            </button>
-            <button class="sample-chip" data-grade="2">
-              <span class="chip-dot" style="background:#F59E0B;"></span> Grade 2: Moderate DR
-            </button>
-            <button class="sample-chip" data-grade="3">
-              <span class="chip-dot" style="background:#EF4444;"></span> Grade 3: Severe DR
-            </button>
-            <button class="sample-chip" data-grade="4">
-              <span class="chip-dot" style="background:#A855F7;"></span> Grade 4: Proliferative DR
-            </button>
-          </div>
-        </div>
-
-        <!-- Upload Dropzone -->
+        <!-- Primary Upload Dropzone -->
         <div class="dropzone" id="dropzone">
           <div class="drop-icon">📤</div>
           <div class="drop-text"><strong>Click to Upload</strong> or drag and drop retinal photo</div>
-          <div class="drop-sub">Supported formats: JPG, PNG, JPEG, TIFF (Max 25MB)</div>
+          <div class="drop-sub">Supported formats: JPG, PNG, JPEG, TIFF (Max 25MB) • Model automatically analyzes retina & predicts DR grade</div>
           <input type="file" id="fileInput" accept="image/*" style="display:none;">
+        </div>
+
+        <!-- Anonymous Quick Test Scans -->
+        <div class="sample-bar">
+          <div class="sample-bar-label">Or Test with Anonymous Patient Scans:</div>
+          <div class="sample-chips">
+            <button class="sample-chip active" data-img="images/MAPLES_test_20051020_44923_0100_PP.jpg" title="Patient Scan #1">
+              <span class="chip-dot" style="background:#10B981;"></span> Patient Scan #1
+            </button>
+            <button class="sample-chip" data-img="images/MAPLES_test_20051021_39222_0100_PP.jpg" title="Patient Scan #2">
+              <span class="chip-dot" style="background:#38BDF8;"></span> Patient Scan #2
+            </button>
+            <button class="sample-chip" data-img="images/IDRID_test_IDRiD_57.jpg" title="Patient Scan #3">
+              <span class="chip-dot" style="background:#F59E0B;"></span> Patient Scan #3
+            </button>
+            <button class="sample-chip" data-img="images/IDRID_test_IDRiD_55.jpg" title="Patient Scan #4">
+              <span class="chip-dot" style="background:#EF4444;"></span> Patient Scan #4
+            </button>
+          </div>
         </div>
 
         <!-- Dual Layer Canvas Viewer -->
