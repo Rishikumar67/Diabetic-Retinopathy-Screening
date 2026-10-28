@@ -153,6 +153,13 @@ def main():
     with col_t2:
         st.markdown("<div style='text-align:right;'><span class='project-badge'>Stage 1 & 2 Prototype</span></div>", unsafe_allow_html=True)
 
+    # Active screening state variables
+    active_img_rgb = None
+    active_meta = None
+    sample_filename = ""
+    quality = None
+    prediction = None
+
     # Tabs
     tab_screening, tab_explain, tab_vessels, tab_dataset, tab_benchmarks, tab_report, tab_synopsis = st.tabs([
         "🔬 Automated Screening",
@@ -178,10 +185,6 @@ def main():
                 ["Browse Sample from Dataset", "Upload Retinal Image"],
                 horizontal=False
             )
-
-        active_img_rgb = None
-        active_meta = None
-        sample_filename = ""
 
         if input_mode == "Upload Retinal Image":
             uploaded_file = st.file_uploader(
@@ -307,6 +310,8 @@ def main():
 
         if active_img_rgb is not None:
             norm_input = preprocess_for_model(active_img_rgb)
+            if prediction is None:
+                prediction = predict_fundus_severity(model, norm_input, metadata_hint=None)
             heatmap = compute_gradcam_heatmap(model, norm_input, class_idx=prediction["predicted_grade"])
 
             # Options
@@ -627,6 +632,12 @@ def main():
         st.markdown("Generates a formal, printable screening summary for academic and ophthalmic review.")
 
         if active_img_rgb is not None:
+            if quality is None:
+                quality = check_image_quality(active_img_rgb)
+            if prediction is None:
+                norm_input = preprocess_for_model(active_img_rgb)
+                prediction = predict_fundus_severity(model, norm_input, metadata_hint=None)
+
             col_pi1, col_pi2 = st.columns(2)
             with col_pi1:
                 rep_patient_name = st.text_input("Patient Full Name:", "Rishi Kumar")
