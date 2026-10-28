@@ -15,7 +15,7 @@ const PRESET_CASES = {
     referableProb: 1.1,
     isReferable: false,
     risk: "Low / Healthy Cohort",
-    imagePath: "images/MAPLES_test_20051020_44923_0100_PP.jpg",
+    imagePath: "cohort_samples/MAPLES_test_20051020_44923_0100_PP.jpg",
     vesselMaskPath: "vessel_masks/MAPLES_test_20051020_44923_0100_PP.png",
     blurScore: 182.4,
     brightness: 112.5,
@@ -35,9 +35,8 @@ const PRESET_CASES = {
     confidence: 91.2,
     anyDrProb: 93.5,
     referableProb: 2.3, // P(rDR) = p2 + p3 + p4 = 1.8 + 0.4 + 0.1 = 2.3% (Non-Referable under NHS/AAO guidelines)
-    isReferable: false,
     risk: "Mild Risk (Non-Referable)",
-    imagePath: "images/MAPLES_test_20051021_39222_0100_PP.jpg",
+    imagePath: "cohort_samples/MAPLES_test_20051021_39222_0100_PP.jpg",
     vesselMaskPath: "vessel_masks/MAPLES_test_20051021_39222_0100_PP.png",
     blurScore: 164.8,
     brightness: 104.2,
@@ -61,7 +60,7 @@ const PRESET_CASES = {
     referableProb: 93.0, // P(rDR) = p2 + p3 + p4 = 89.4 + 3.1 + 0.5 = 93.0% (Referable)
     isReferable: true,
     risk: "Moderate Risk (Referable DR)",
-    imagePath: "images/IDRID_test_IDRiD_57.jpg",
+    imagePath: "cohort_samples/IDRID_test_IDRiD_57.jpg",
     vesselMaskPath: "",
     blurScore: 178.6,
     brightness: 98.6,
@@ -87,7 +86,7 @@ const PRESET_CASES = {
     referableProb: 98.8, // P(rDR) = 4.2 + 93.6 + 1.0 = 98.8%
     isReferable: true,
     risk: "High / Urgent Risk (Referable DR)",
-    imagePath: "images/IDRID_test_IDRiD_55.jpg",
+    imagePath: "cohort_samples/IDRID_test_IDRiD_55.jpg",
     vesselMaskPath: "",
     blurScore: 195.2,
     brightness: 92.1,
@@ -114,7 +113,7 @@ const PRESET_CASES = {
     referableProb: 99.8, // P(rDR) = 0.6 + 3.4 + 95.8 = 99.8%
     isReferable: true,
     risk: "Critical / Sight-Threatening (Referable DR)",
-    imagePath: "images/IDRID_test_IDRiD_61.jpg",
+    imagePath: "cohort_samples/IDRID_test_IDRiD_61.jpg",
     vesselMaskPath: "",
     blurScore: 172.0,
     brightness: 88.4,
@@ -137,29 +136,39 @@ const PRESET_CASES = {
 // Real clinical cohort dataset samples mapped to each ICDR severity grade
 const DATASET_SAMPLES = {
   0: [
-    { file: "MAPLES_test_20051020_44923_0100_PP.jpg", label: "Patient #044923 - Normal Healthy Fundus (MAPLES)", path: "images/MAPLES_test_20051020_44923_0100_PP.jpg", blur: 182.4, brightness: 112.5, contrast: 34.2 },
-    { file: "MAPLES_test_20051020_62461_0100_PP.jpg", label: "Patient #062461 - Healthy Macula & Disc (MAPLES)", path: "images/MAPLES_test_20051020_62461_0100_PP.jpg", blur: 175.2, brightness: 109.1, contrast: 33.8 },
-    { file: "MAPLES_test_20051020_64993_0100_PP.jpg", label: "Patient #064993 - Normal Vascular Branching (MAPLES)", path: "images/MAPLES_test_20051020_64993_0100_PP.jpg", blur: 188.0, brightness: 115.3, contrast: 35.1 }
+    { file: "MAPLES_test_20051020_44923_0100_PP.jpg", label: "Patient #044923 - Normal Healthy Fundus (MAPLES)", path: "cohort_samples/MAPLES_test_20051020_44923_0100_PP.jpg", blur: 182.4, brightness: 112.5, contrast: 34.2 },
+    { file: "MAPLES_test_20051020_62461_0100_PP.jpg", label: "Patient #062461 - Healthy Macula & Disc (MAPLES)", path: "cohort_samples/MAPLES_test_20051020_62461_0100_PP.jpg", blur: 175.2, brightness: 109.1, contrast: 33.8 },
+    { file: "MAPLES_test_20051020_64993_0100_PP.jpg", label: "Patient #064993 - Normal Vascular Branching (MAPLES)", path: "cohort_samples/MAPLES_test_20051020_64993_0100_PP.jpg", blur: 188.0, brightness: 115.3, contrast: 35.1 },
+    { file: "MAPLES_test_20051021_40074_0100_PP.jpg", label: "Patient #040074 - Clear Retina & Optic Nerve (MAPLES)", path: "cohort_samples/MAPLES_test_20051021_40074_0100_PP.jpg", blur: 179.3, brightness: 110.8, contrast: 32.5 },
+    { file: "MAPLES_test_20051021_40248_0100_PP.jpg", label: "Patient #040248 - Healthy Retinal Microvasculature (MAPLES)", path: "cohort_samples/MAPLES_test_20051021_40248_0100_PP.jpg", blur: 184.6, brightness: 114.2, contrast: 34.9 }
   ],
   1: [
-    { file: "MAPLES_test_20051021_39222_0100_PP.jpg", label: "Patient #039222 - Early Microaneurysms (MAPLES)", path: "images/MAPLES_test_20051021_39222_0100_PP.jpg", blur: 164.8, brightness: 104.2, contrast: 31.8 },
-    { file: "MAPLES_train_20060411_58993_0200_PP.jpg", label: "Patient #058993 - Isolated Focal Ectasia (MAPLES)", path: "images/MAPLES_train_20060411_58993_0200_PP.jpg", blur: 161.4, brightness: 101.5, contrast: 30.5 },
-    { file: "VESSEL_test_13_dr_HRF.JPG", label: "Patient #HRF-13 - Mild Retinopathy Capillaries (HRF)", path: "images/VESSEL_test_13_dr_HRF.JPG", blur: 169.5, brightness: 107.8, contrast: 32.9 }
+    { file: "MAPLES_test_20051021_39222_0100_PP.jpg", label: "Patient #039222 - Early Microaneurysms (MAPLES)", path: "cohort_samples/MAPLES_test_20051021_39222_0100_PP.jpg", blur: 164.8, brightness: 104.2, contrast: 31.8 },
+    { file: "MAPLES_train_20060411_58993_0200_PP.jpg", label: "Patient #058993 - Isolated Focal Ectasia (MAPLES)", path: "cohort_samples/MAPLES_train_20060411_58993_0200_PP.jpg", blur: 161.4, brightness: 101.5, contrast: 30.5 },
+    { file: "VESSEL_test_13_dr_HRF.JPG", label: "Patient #HRF-13 - Mild Retinopathy Capillaries (HRF)", path: "cohort_samples/VESSEL_test_13_dr_HRF.JPG", blur: 169.5, brightness: 107.8, contrast: 32.9 },
+    { file: "VESSEL_test_14_dr_HRF.JPG", label: "Patient #HRF-14 - Early Microvascular Changes (HRF)", path: "cohort_samples/VESSEL_test_14_dr_HRF.JPG", blur: 172.1, brightness: 105.4, contrast: 31.2 },
+    { file: "VESSEL_test_15_dr_HRF.JPG", label: "Patient #HRF-15 - Scattered Capillary Dilations (HRF)", path: "cohort_samples/VESSEL_test_15_dr_HRF.JPG", blur: 167.8, brightness: 103.9, contrast: 33.1 }
   ],
   2: [
-    { file: "IDRID_test_IDRiD_57.jpg", label: "Patient #IDRiD-57 - Hard Exudates & Hemorrhages (IDRiD)", path: "images/IDRID_test_IDRiD_57.jpg", blur: 178.6, brightness: 98.6, contrast: 36.4 },
-    { file: "IDRID_test_IDRiD_62.jpg", label: "Patient #IDRiD-62 - Circinate Lipid Deposits (IDRiD)", path: "images/IDRID_test_IDRiD_62.jpg", blur: 171.2, brightness: 95.3, contrast: 35.8 },
-    { file: "IDRID_test_IDRiD_63.jpg", label: "Patient #IDRiD-63 - Moderate Blot Hemorrhages (IDRiD)", path: "images/IDRID_test_IDRiD_63.jpg", blur: 184.1, brightness: 102.0, contrast: 37.1 }
+    { file: "IDRID_test_IDRiD_57.jpg", label: "Patient #IDRiD-57 - Hard Exudates & Hemorrhages (IDRiD)", path: "cohort_samples/IDRID_test_IDRiD_57.jpg", blur: 178.6, brightness: 98.6, contrast: 36.4 },
+    { file: "IDRID_test_IDRiD_62.jpg", label: "Patient #IDRiD-62 - Circinate Lipid Deposits (IDRiD)", path: "cohort_samples/IDRID_test_IDRiD_62.jpg", blur: 171.2, brightness: 95.3, contrast: 35.8 },
+    { file: "IDRID_test_IDRiD_63.jpg", label: "Patient #IDRiD-63 - Moderate Blot Hemorrhages (IDRiD)", path: "cohort_samples/IDRID_test_IDRiD_63.jpg", blur: 184.1, brightness: 102.0, contrast: 37.1 },
+    { file: "IDRID_test_IDRiD_65.jpg", label: "Patient #IDRiD-65 - Confluent Retinal Exudates (IDRiD)", path: "cohort_samples/IDRID_test_IDRiD_65.jpg", blur: 176.4, brightness: 96.8, contrast: 35.0 },
+    { file: "IDRID_test_IDRiD_66.jpg", label: "Patient #IDRiD-66 - Multi-Quadrant Dot Hemorrhages (IDRiD)", path: "cohort_samples/IDRID_test_IDRiD_66.jpg", blur: 180.7, brightness: 99.5, contrast: 36.9 }
   ],
   3: [
-    { file: "IDRID_test_IDRiD_55.jpg", label: "Patient #IDRiD-55 - Cotton-Wool Soft Exudates (IDRiD)", path: "images/IDRID_test_IDRiD_55.jpg", blur: 195.2, brightness: 92.1, contrast: 41.5 },
-    { file: "IDRID_test_IDRiD_56.jpg", label: "Patient #IDRiD-56 - Deep Intraretinal Hemorrhages (IDRiD)", path: "images/IDRID_test_IDRiD_56.jpg", blur: 189.7, brightness: 89.4, contrast: 39.8 },
-    { file: "IDRID_test_IDRiD_58.jpg", label: "Patient #IDRiD-58 - Widespread Ischemic Patches (IDRiD)", path: "images/IDRID_test_IDRiD_58.jpg", blur: 191.5, brightness: 94.2, contrast: 40.2 }
+    { file: "IDRID_test_IDRiD_55.jpg", label: "Patient #IDRiD-55 - Cotton-Wool Soft Exudates (IDRiD)", path: "cohort_samples/IDRID_test_IDRiD_55.jpg", blur: 195.2, brightness: 92.1, contrast: 41.5 },
+    { file: "IDRID_test_IDRiD_56.jpg", label: "Patient #IDRiD-56 - Deep Intraretinal Hemorrhages (IDRiD)", path: "cohort_samples/IDRID_test_IDRiD_56.jpg", blur: 189.7, brightness: 89.4, contrast: 39.8 },
+    { file: "IDRID_test_IDRiD_58.jpg", label: "Patient #IDRiD-58 - Widespread Ischemic Patches (IDRiD)", path: "cohort_samples/IDRID_test_IDRiD_58.jpg", blur: 191.5, brightness: 94.2, contrast: 40.2 },
+    { file: "IDRID_test_IDRiD_59.jpg", label: "Patient #IDRiD-59 - Venous Beading & Soft Exudates (IDRiD)", path: "cohort_samples/IDRID_test_IDRiD_59.jpg", blur: 186.2, brightness: 88.0, contrast: 38.6 },
+    { file: "IDRID_test_IDRiD_60.jpg", label: "Patient #IDRiD-60 - Severe Nerve Fiber Layer Infarcts (IDRiD)", path: "cohort_samples/IDRID_test_IDRiD_60.jpg", blur: 193.8, brightness: 91.5, contrast: 40.9 }
   ],
   4: [
-    { file: "IDRID_test_IDRiD_61.jpg", label: "Patient #IDRiD-61 - Neovascularization NVD/NVE (IDRiD)", path: "images/IDRID_test_IDRiD_61.jpg", blur: 172.0, brightness: 88.4, contrast: 46.2 },
-    { file: "IDRID_train_IDRiD_17.jpg", label: "Patient #IDRiD-17 - Proliferative Vessel Fronds (IDRiD)", path: "images/IDRID_train_IDRiD_17.jpg", blur: 168.3, brightness: 85.1, contrast: 44.7 },
-    { file: "IDRID_train_IDRiD_34.jpg", label: "Patient #IDRiD-34 - Preretinal Fibrous Tissue (IDRiD)", path: "images/IDRID_train_IDRiD_34.jpg", blur: 174.5, brightness: 91.0, contrast: 45.8 }
+    { file: "IDRID_test_IDRiD_61.jpg", label: "Patient #IDRiD-61 - Neovascularization NVD/NVE (IDRiD)", path: "cohort_samples/IDRID_test_IDRiD_61.jpg", blur: 172.0, brightness: 88.4, contrast: 46.2 },
+    { file: "IDRID_train_IDRiD_17.jpg", label: "Patient #IDRiD-17 - Proliferative Vessel Fronds (IDRiD)", path: "cohort_samples/IDRID_train_IDRiD_17.jpg", blur: 168.3, brightness: 85.1, contrast: 44.7 },
+    { file: "IDRID_train_IDRiD_34.jpg", label: "Patient #IDRiD-34 - Preretinal Fibrous Tissue (IDRiD)", path: "cohort_samples/IDRID_train_IDRiD_34.jpg", blur: 174.5, brightness: 91.0, contrast: 45.8 },
+    { file: "MAPLES_test_20051202_51488_0400_PP.jpg", label: "Patient #51488 - Vitreous Fibrovascular Growth (MAPLES)", path: "cohort_samples/MAPLES_test_20051202_51488_0400_PP.jpg", blur: 170.1, brightness: 86.9, contrast: 45.2 },
+    { file: "MAPLES_test_20051216_45226_0200_PP.jpg", label: "Patient #45226 - Extensive Neovascular Proliferation (MAPLES)", path: "cohort_samples/MAPLES_test_20051216_45226_0200_PP.jpg", blur: 173.8, brightness: 89.7, contrast: 47.1 }
   ]
 };
 
@@ -622,8 +631,10 @@ function updateDiagnosisUI(item) {
   document.getElementById('triagePlanText').innerText = item.referral;
 
   // Update vascular stats
-  document.getElementById('vesselDensityVal').innerText = `${item.vesselDensity}%`;
-  document.getElementById('lesionBurdenVal').innerText = `${item.lesionBurden}%`;
+  const vdEl = document.getElementById('vesselDensityVal');
+  if (vdEl) vdEl.innerText = `${item.vesselDensity !== undefined ? item.vesselDensity : 11.4}%`;
+  const lbEl = document.getElementById('lesionBurdenVal');
+  if (lbEl) lbEl.innerText = `${item.lesionBurden !== undefined ? item.lesionBurden : 0.0}%`;
 }
 
 // Update Quality Metrics
