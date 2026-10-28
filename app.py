@@ -161,14 +161,13 @@ def main():
     prediction = None
 
     # Tabs
-    tab_screening, tab_explain, tab_vessels, tab_dataset, tab_benchmarks, tab_report, tab_synopsis = st.tabs([
+    tab_screening, tab_explain, tab_vessels, tab_dataset, tab_benchmarks, tab_report = st.tabs([
         "🔬 Automated Screening",
         "🧠 Explainable AI (Grad-CAM)",
         "🩺 Vasculature & Lesions",
         "📁 Dataset Explorer",
         "📊 Academic Evaluation",
-        "📄 Clinical Report",
-        "ℹ️ Project Synopsis"
+        "📄 Clinical Report"
     ])
 
     # ----------------------------------------------------
@@ -765,53 +764,7 @@ def main():
         else:
             st.info("Please load or upload an image in Tab 1 to generate a patient screening report.")
 
-    # ----------------------------------------------------
-    # TAB 7: PROJECT SYNOPSIS & ARCHITECTURE
-    # ----------------------------------------------------
-    with tab_synopsis:
-        st.markdown("### Project Synopsis & Methodology Architecture")
-        st.markdown(
-            "Below is the complete project architecture implemented directly from your "
-            "project synopsis submitted to Dr. Gaurav Kumar."
-        )
 
-        st.markdown("""
-```
-Retinal Fundus Image (.jpg / .png / .tif)
-         ↓
-Image Preprocessing & Quality Verification
- (Laplacian Blur Check, Illumination Normalization, Crop)
-         ↓
-Contrast Enhancement (CLAHE Green Channel & Ben Graham)
-         ↓
-Deep Learning Backbone: EfficientNetB0 (Transfer Learning)
-         ↓
-Feature Extraction & Dense Classification Head
-         ↓
-┌─────────────────────────────────┬─────────────────────────────────┐
-↓                                 ↓                                 ↓
-5-Class DR Severity Staging      Grad-CAM Saliency Map         Vessel & Lesion Segmentation
-(Grade 0..4 + Confidence %)       (Heatmap Feature Saliency)    (Vasculature & Lesion Burden)
-└─────────────────────────────────┴─────────────────────────────────┘
-         ↓
-Comprehensive AI-Assisted Clinical Screening Dashboard (Streamlit)
-```
-        """)
-
-        st.markdown("#### Synopsis Metadata & Credits")
-        st.table(pd.DataFrame({
-            "Field": ["Project Title", "Submitted To", "Student Authors", "Class / Batch", "Deep Learning Backbone", "Explainability Technique", "Interface", "Dataset Sources"],
-            "Details": [
-                "Diabetic Retinopathy Screening Using Deep Learning",
-                "Dr. Gaurav Kumar",
-                "Rishi Kumar (25scs2040002265), Vanshika Pal (25scs2040003225), Samia Khan (25scs2040003487)",
-                "2MCA1 (Batch 2025-2027)",
-                "EfficientNetB0 Transfer Learning with ImageNet weights",
-                "Grad-CAM (Gradient-weighted Class Activation Mapping)",
-                "Streamlit Web Application",
-                "IDRID, MAPLES, RETINOMIX, VESSEL (585 annotated images)"
-            ]
-        }))
 
 if __name__ == "__main__":
     from streamlit.runtime import exists

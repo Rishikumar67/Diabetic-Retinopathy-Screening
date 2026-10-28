@@ -1229,8 +1229,7 @@ function initScrollSpyAndNavigation() {
     'screening': 'Screening Lab',
     'explainable': 'Explainable AI',
     'dataset': 'Dataset & Benchmarks',
-    'report': 'Clinical Report',
-    'synopsis': 'Synopsis Index'
+    'report': 'Clinical Report'
   };
 
   // Click handler for smooth scrolling & immediate active switch
@@ -1251,7 +1250,7 @@ function initScrollSpyAndNavigation() {
   });
 
   // ScrollSpy using window scroll position
-  const sectionIds = ['synopsis', 'report', 'dataset', 'explainable', 'screening'];
+  const sectionIds = ['report', 'dataset', 'explainable', 'screening'];
   const sections = sectionIds.map(id => document.getElementById(id)).filter(Boolean);
 
   let ticking = false;

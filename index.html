@@ -32,7 +32,6 @@
           <li><a href="#explainable" class="nav-link" data-section="explainable">Explainable AI</a></li>
           <li><a href="#dataset" class="nav-link" data-section="dataset">Dataset & Benchmarks</a></li>
           <li><a href="#report" class="nav-link" data-section="report">Clinical Report</a></li>
-          <li><a href="#synopsis" class="nav-link" data-section="synopsis">Synopsis Index</a></li>
         </ul>
       </nav>
 
@@ -314,21 +313,7 @@
       </div>
 
       <div class="workspace-grid" style="margin-bottom: 0;">
-        <div class="card">
-          <h3 class="card-title" style="margin-bottom: 12px;">Mathematical Formulation</h3>
-          <p style="font-size: 0.88rem; color: var(--text-muted); margin-bottom: 14px;">
-            Grad-CAM calculates the gradient of the severity score $y^c$ with respect to feature activation map $A^k$:
-          </p>
-          <div class="quality-box" style="font-family: var(--font-mono); font-size: 0.9rem; text-align: left; color: var(--cyan-primary); margin-bottom: 14px;">
-            α_k^c = (1/Z) ∑_i ∑_j (∂y^c / ∂A_ij^k)<br>
-            L_GradCAM^c = ReLU( ∑_k α_k^c A^k )
-          </div>
-          <p style="font-size: 0.84rem; color: var(--text-muted);">
-            Warm color tones (red, orange, yellow) indicate regions with high concentration of microaneurysms, hemorrhages, or exudates that directly triggered the model's classification.
-          </p>
-        </div>
-
-        <div class="card">
+        <div class="card" style="grid-column: 1 / -1;">
           <h3 class="card-title" style="margin-bottom: 12px;">Multi-Lesion Semantic Mapping</h3>
           <table class="custom-table">
             <thead>
@@ -698,104 +683,6 @@
         <a href="reports/metrics_summary.json" download class="btn btn-secondary">
           📥 Download Metrics (JSON)
         </a>
-      </div>
-    </div>
-  </section>
-
-  <!-- Section: Project Synopsis Index (Table of Contents) -->
-  <section class="section" id="synopsis">
-    <div class="container">
-      <div class="section-header">
-        <h2 class="section-title">Project Synopsis Chapters (INDEX)</h2>
-        <p class="section-subtitle">
-          Complete structural mapping corresponding to the project synopsis document at IILM University.
-        </p>
-      </div>
-
-      <div class="synopsis-chapter-list">
-        <div class="chapter-item">
-          <div class="chapter-num">Chapter 1 • Page 3</div>
-          <div class="chapter-name">1. Introduction</div>
-          <div class="chapter-desc">Clinical significance of Diabetic Retinopathy, prevalence of visual loss, and justification for automated computer-assisted screening systems.</div>
-        </div>
-
-        <div class="chapter-item">
-          <div class="chapter-num">Chapter 2 • Page 3</div>
-          <div class="chapter-name">2. Problem Statement</div>
-          <div class="chapter-desc">Challenges of manual fundus examination, ophthalmologist scarcity, screening bottlenecks, and need for standardized multi-stage DR grading.</div>
-        </div>
-
-        <div class="chapter-item">
-          <div class="chapter-num">Chapter 3 • Page 3</div>
-          <div class="chapter-name">3. Objectives of the Project</div>
-          <div class="chapter-desc">Nine core aims including image preprocessing, data augmentation, EfficientNetB0 transfer learning, Grad-CAM integration, and web deployment.</div>
-        </div>
-
-        <div class="chapter-item">
-          <div class="chapter-num">Chapter 4 • Page 4</div>
-          <div class="chapter-name">4. Scope of the Project</div>
-          <div class="chapter-desc">Boundaries of the screening prototype: 5-class severity classification (Grades 0 to 4) under the International Clinical DR (ICDR) scale.</div>
-        </div>
-
-        <div class="chapter-item">
-          <div class="chapter-num">Chapter 5 • Page 5</div>
-          <div class="chapter-name">5. Literature Review</div>
-          <div class="chapter-desc">Comparative analysis of landmark research papers (Gulshan et al., Jiang et al., Anand et al.) and identification of project research gaps.</div>
-        </div>
-
-        <div class="chapter-item">
-          <div class="chapter-num">Chapter 6 • Page 4</div>
-          <div class="chapter-name">6. Proposed System</div>
-          <div class="chapter-desc">Architectural workflow from user image upload, quality checking, preprocessing, EfficientNetB0 inference, to Grad-CAM heatmap visualization.</div>
-        </div>
-
-        <div class="chapter-item">
-          <div class="chapter-num">Chapter 7 • Page 6</div>
-          <div class="chapter-name">7. Technology Used</div>
-          <div class="chapter-desc">Python 3.x, TensorFlow, Keras, EfficientNetB0, OpenCV, NumPy, Scikit-learn, Pandas, Streamlit, and Grad-CAM explainable AI.</div>
-        </div>
-
-        <div class="chapter-item">
-          <div class="chapter-num">Chapter 8 • Page 7</div>
-          <div class="chapter-name">8. Methodology</div>
-          <div class="chapter-desc">Eight-step pipeline: Dataset acquisition, Preprocessing, Data Augmentation, Model Development, Training, Evaluation, Explainability, and Deployment.</div>
-        </div>
-
-        <div class="chapter-item">
-          <div class="chapter-num">Chapter 9 • Page 10</div>
-          <div class="chapter-name">9. Features of the System</div>
-          <div class="chapter-desc">User-friendly UI, automated quality inspection, 5-class classification, confidence estimation, Grad-CAM overlays, and performance reports.</div>
-        </div>
-
-        <div class="chapter-item">
-          <div class="chapter-num">Chapter 10 • Page 10</div>
-          <div class="chapter-name">10. Advantages of the System</div>
-          <div class="chapter-desc">Rapid triage, consistent predictions, explainable visual heatmaps, reduced specialist workload, and academic research suitability.</div>
-        </div>
-
-        <div class="chapter-item">
-          <div class="chapter-num">Chapter 11 • Page 11</div>
-          <div class="chapter-name">11. Limitations of the System</div>
-          <div class="chapter-desc">Class imbalance in severe cohorts, camera sensor variability, external clinical validation requirements, and non-substitute for medical diagnosis.</div>
-        </div>
-
-        <div class="chapter-item">
-          <div class="chapter-num">Chapter 12 • Page 11</div>
-          <div class="chapter-name">12. Future Enhancements</div>
-          <div class="chapter-desc">Multi-disease detection (Glaucoma, AMD), mobile application support (Android/iOS), integration with electronic health records (EHR).</div>
-        </div>
-
-        <div class="chapter-item">
-          <div class="chapter-num">Chapter 13 • Page 11</div>
-          <div class="chapter-name">13. Conclusion</div>
-          <div class="chapter-desc">Summary of demonstrated deep learning feasibility for DR screening and delivery of an explainable, end-to-end prototype.</div>
-        </div>
-
-        <div class="chapter-item">
-          <div class="chapter-num">Chapter 14 • Page 12</div>
-          <div class="chapter-name">14. Bibliography</div>
-          <div class="chapter-desc">Complete academic citations of medical AI literature in JAMA, IEEE EMBC, and Nature Deep Learning.</div>
-        </div>
       </div>
     </div>
   </section>
