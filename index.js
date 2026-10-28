@@ -229,12 +229,12 @@ function setupInputModeSwitching() {
 }
 
 // Update dataset patient scan selector dropdown
-function updateDatasetSampleDropdown(grade) {
+function updateDatasetSampleDropdown(grade, currentFile) {
   const select = document.getElementById('datasetSampleSelect');
   const countEl = document.getElementById('selectedSampleCount');
   if (!select) return;
 
-  const samples = DATASET_SAMPLES[grade] || [];
+  const samples = (typeof COHORT_DATA !== 'undefined' && COHORT_DATA[grade]) ? COHORT_DATA[grade] : (DATASET_SAMPLES[grade] || []);
   if (countEl) countEl.innerText = `${samples.length} Cohort Scans Available`;
 
   select.innerHTML = '';
@@ -242,6 +242,9 @@ function updateDatasetSampleDropdown(grade) {
     const opt = document.createElement('option');
     opt.value = idx;
     opt.innerText = s.label;
+    if (currentFile && s.file === currentFile) {
+      opt.selected = true;
+    }
     select.appendChild(opt);
   });
 
@@ -321,57 +324,66 @@ function renderProceduralFundus(item) {
   updateReportUI();
 }
 
-// Load a clinical benchmark case with dataset sample awareness
+// Load a clinical benchmark case with real dataset image and AI model prediction
 function loadCase(grade, sampleObj) {
-  currentCase = { ...(PRESET_CASES[grade] || PRESET_CASES[0]) };
-  const sample = sampleObj || (DATASET_SAMPLES[grade] ? DATASET_SAMPLES[grade][0] : null);
-  const targetPath = sample ? sample.path : currentCase.imagePath;
+  const samples = (typeof COHORT_DATA !== 'undefined' && COHORT_DATA[grade]) ? COHORT_DATA[grade] : (DATASET_SAMPLES[grade] || []);
+  const sample = sampleObj || (samples.length > 0 ? samples[0] : null);
 
   if (sample) {
-    currentCase.blurScore = sample.blur || currentCase.blurScore;
-    currentCase.brightness = sample.brightness || currentCase.brightness;
-    currentCase.contrast = sample.contrast || currentCase.contrast;
+    currentCase = {
+      ...(PRESET_CASES[grade] || PRESET_CASES[0]),
+      ...sample,
+      blurScore: sample.blurScore || sample.blur,
+      brightness: sample.brightness,
+      contrast: sample.contrast,
+      confidence: sample.confidence !== undefined ? sample.confidence : (PRESET_CASES[grade] ? PRESET_CASES[grade].confidence : 90),
+      anyDrProb: sample.anyDrProb !== undefined ? sample.anyDrProb : 50,
+      referableProb: sample.referableProb !== undefined ? sample.referableProb : (grade >= 2 ? 85 : 5),
+      probs: sample.probs || (PRESET_CASES[grade] ? PRESET_CASES[grade].probs : [20, 20, 20, 20, 20]),
+      description: sample.description || sample.desc || (PRESET_CASES[grade] ? PRESET_CASES[grade].description : ''),
+      referral: sample.referral || (PRESET_CASES[grade] ? PRESET_CASES[grade].referral : '')
+    };
+  } else {
+    currentCase = { ...(PRESET_CASES[grade] || PRESET_CASES[0]) };
   }
 
-  if (!sampleObj) {
-    updateDatasetSampleDropdown(grade);
-  }
+  // Sync dropdown with active sample
+  updateDatasetSampleDropdown(grade, sample ? sample.file : null);
+
+  // Sync active chip
+  const chips = document.querySelectorAll('.sample-chip');
+  chips.forEach(c => {
+    if (c.getAttribute('data-grade') === String(grade)) {
+      c.classList.add('active');
+    } else {
+      c.classList.remove('active');
+    }
+  });
+
+  // Use embedded dataUri first (100% reliable, zero 404), fallback to path
+  const targetSrc = (sample && sample.dataUri) ? sample.dataUri : (sample ? sample.path : currentCase.imagePath);
 
   const img = new Image();
-  // Avoid CORS blocking on local files or same-origin paths
-  if (targetPath.startsWith('http://') || targetPath.startsWith('https://')) {
-    img.crossOrigin = "anonymous";
-  }
-
   img.onload = () => {
     currentLoadedImage = img;
     renderImage();
     updateQualityMetrics(currentCase.blurScore, currentCase.brightness, currentCase.contrast);
     updateDiagnosisUI(currentCase);
     renderOverlays();
-    updateReportUI(sample ? sample.file : targetPath.split('/').pop());
+    updateReportUI(sample ? sample.file : 'retinal_scan.jpg');
   };
 
   img.onerror = () => {
-    console.warn("Retrying image load or falling back to procedural fundus for:", targetPath);
-    if (img.crossOrigin) {
-      const retryImg = new Image();
-      retryImg.onload = () => {
-        currentLoadedImage = retryImg;
-        renderImage();
-        updateQualityMetrics(currentCase.blurScore, currentCase.brightness, currentCase.contrast);
-        updateDiagnosisUI(currentCase);
-        renderOverlays();
-        updateReportUI(sample ? sample.file : targetPath.split('/').pop());
-      };
-      retryImg.onerror = () => renderProceduralFundus(currentCase);
-      retryImg.src = targetPath;
+    // If path failed, try dataUri or procedural fallback
+    if (sample && sample.dataUri && img.src !== sample.dataUri) {
+      img.src = sample.dataUri;
     } else {
+      console.warn("Falling back to procedural fundus for:", targetSrc);
       renderProceduralFundus(currentCase);
     }
   };
 
-  img.src = targetPath;
+  img.src = targetSrc;
 }
 
 // Render image on canvas with selected filter
