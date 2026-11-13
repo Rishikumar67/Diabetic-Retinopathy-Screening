@@ -8,7 +8,7 @@
   
   <!-- Favicon & Stylesheet -->
   <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>👁️</text></svg>">
-  <link rel="stylesheet" href="index.css">
+  <link rel="stylesheet" href="index.css?v=2.2">
   
   <!-- PDF Generation Library -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
@@ -260,25 +260,47 @@
         </div>
 
         <!-- Layer Toggles -->
-        <div class="sample-bar-label" style="margin-top: 18px;">Visual Layer Inspection</div>
-        <div class="lesion-toggles">
-          <label class="toggle-label">
+        <div class="sample-bar-label" style="margin-top: 22px; font-size: 0.88rem; font-weight: 700; color: #94A3B8; text-transform: uppercase; letter-spacing: 0.05em; display: flex; align-items: center; justify-content: space-between;">
+          <span>Visual Layer Inspection</span>
+          <span style="font-size: 0.74rem; color: var(--text-dim); text-transform: none; font-weight: 400;">3 Active Overlays</span>
+        </div>
+        <div class="lesion-toggles" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin: 12px 0 18px;">
+          <label class="toggle-label" style="padding: 13px 16px; min-height: 50px; font-size: 0.90rem;">
             <span>🔥 Grad-CAM Heatmap</span>
-            <input type="checkbox" id="toggleGradcam" class="toggle-checkbox" checked>
+            <input type="checkbox" id="toggleGradcam" class="toggle-checkbox" style="width: 19px; height: 19px;" checked>
           </label>
-          <label class="toggle-label">
+          <label class="toggle-label" style="padding: 13px 16px; min-height: 50px; font-size: 0.90rem;">
             <span>🌱 Vasculature Network</span>
-            <input type="checkbox" id="toggleVessels" class="toggle-checkbox" checked>
+            <input type="checkbox" id="toggleVessels" class="toggle-checkbox" style="width: 19px; height: 19px;" checked>
           </label>
-          <label class="toggle-label">
-            <span>🔴 Pathological Lesions</span>
-            <input type="checkbox" id="toggleLesions" class="toggle-checkbox" checked>
-          <label class="toggle-label">
-            <span>📊 Vascular Density: <strong id="vesselDensityVal" style="color:var(--cyan-primary);">11.4%</strong></span>
+          <label class="toggle-label toggle-label-wide" style="grid-column: span 2; width: 100%; padding: 13px 18px; min-height: 50px; font-size: 0.92rem;">
+            <span>🔴 Pathological Lesion Overlays (MA, HE, EX, NV)</span>
+            <input type="checkbox" id="toggleLesions" class="toggle-checkbox" style="width: 19px; height: 19px;" checked>
           </label>
-          <label class="toggle-label">
-            <span>🔬 Lesion Burden: <strong id="lesionBurdenVal" style="color:#F59E0B;">0.0%</strong></span>
-          </label>
+        </div>
+
+        <!-- Quantitative Retinal Biomarkers (Fully Extracted, Large & Spacious) -->
+        <div class="sample-bar-label" style="margin-top: 20px; font-size: 0.88rem; font-weight: 700; color: #94A3B8; text-transform: uppercase; letter-spacing: 0.05em; display: flex; align-items: center; justify-content: space-between;">
+          <span>Quantitative Retinal Biomarkers</span>
+          <span style="font-size: 0.74rem; color: var(--text-dim); text-transform: none; font-weight: 400;">Extracted AI Metrics</span>
+        </div>
+        <div class="biomarker-grid" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin: 12px 0 20px;">
+          <div class="biomarker-card" style="padding: 16px 18px; min-height: 110px;">
+            <div class="biomarker-header" style="font-size: 0.82rem; font-weight: 700;">
+              <span class="biomarker-icon" style="font-size: 1.25rem;">📊</span>
+              <span class="biomarker-title">Vascular Density</span>
+            </div>
+            <div class="biomarker-val" id="vesselDensityVal" style="font-size: 1.85rem; font-weight: 800; color: var(--cyan-primary); margin: 6px 0;">11.4%</div>
+            <div class="biomarker-desc" style="font-size: 0.76rem; color: #64748B;">Retinal vessel coverage across field</div>
+          </div>
+          <div class="biomarker-card" style="padding: 16px 18px; min-height: 110px;">
+            <div class="biomarker-header" style="font-size: 0.82rem; font-weight: 700;">
+              <span class="biomarker-icon" style="font-size: 1.25rem;">🔬</span>
+              <span class="biomarker-title">Lesion Burden</span>
+            </div>
+            <div class="biomarker-val" id="lesionBurdenVal" style="font-size: 1.85rem; font-weight: 800; color: #F59E0B; margin: 6px 0;">0.0%</div>
+            <div class="biomarker-desc" style="font-size: 0.76rem; color: #64748B;">Abnormal microvascular lesion ratio</div>
+          </div>
         </div>
 
         <!-- Clinical Insight Box -->

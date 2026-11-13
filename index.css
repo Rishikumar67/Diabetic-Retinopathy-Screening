@@ -749,36 +749,141 @@ body {
 }
 
 /* =====================================================================
-   LESION & VASCULAR SWITCHES
+   LESION & VASCULAR SWITCHES (EXPANDED & HIGH-VISIBILITY)
    ===================================================================== */
 .lesion-toggles {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 8px;
-  margin: 16px 0;
+  gap: 12px;
+  margin: 14px 0 20px;
 }
 
 .toggle-label {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background: var(--bg-secondary);
-  border: 1px solid var(--border-subtle);
-  padding: 8px 12px;
-  border-radius: var(--radius-sm);
-  font-size: 0.78rem;
-  color: var(--text-muted);
+  background: rgba(15, 23, 42, 0.75);
+  border: 1px solid rgba(148, 163, 184, 0.22);
+  padding: 14px 18px;
+  min-height: 52px;
+  border-radius: var(--radius-md);
+  font-size: 0.92rem;
+  font-weight: 600;
+  color: var(--text-main);
   cursor: pointer;
   user-select: none;
+  transition: all 0.25s ease;
+  gap: 10px;
 }
 
 .toggle-label:hover {
-  border-color: var(--border-active);
+  border-color: var(--cyan-primary);
+  background: rgba(30, 41, 59, 0.9);
+  box-shadow: 0 4px 14px rgba(6, 182, 212, 0.18);
+}
+
+.toggle-label.toggle-label-wide {
+  grid-column: span 2;
+  width: 100%;
+  padding: 14px 20px;
+}
+
+.toggle-label span {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  line-height: 1.3;
 }
 
 .toggle-checkbox {
   accent-color: var(--cyan-primary);
   cursor: pointer;
+  width: 19px;
+  height: 19px;
+  flex-shrink: 0;
+}
+
+/* =====================================================================
+   RETINAL BIOMARKERS (PROMINENT, EXTRACTED & EXPANDED)
+   ===================================================================== */
+.biomarker-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 14px;
+  margin: 12px 0 22px;
+}
+
+.biomarker-card {
+  background: linear-gradient(145deg, rgba(15, 23, 42, 0.85), rgba(13, 21, 39, 0.75));
+  border: 1px solid rgba(148, 163, 184, 0.22);
+  border-radius: var(--radius-md);
+  padding: 16px 20px;
+  min-height: 115px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 6px;
+  transition: all 0.25s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.biomarker-card:hover {
+  border-color: rgba(56, 189, 248, 0.45);
+  box-shadow: 0 6px 20px rgba(15, 23, 42, 0.6);
+  transform: translateY(-2px);
+}
+
+.biomarker-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.82rem;
+  color: #94A3B8;
+  text-transform: uppercase;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+}
+
+.biomarker-icon {
+  font-size: 1.25rem;
+}
+
+.biomarker-val {
+  font-size: 1.85rem;
+  font-weight: 800;
+  font-family: var(--font-mono);
+  line-height: 1.1;
+  margin: 4px 0 2px;
+  letter-spacing: -0.02em;
+}
+
+#vesselDensityVal {
+  color: var(--cyan-primary);
+  text-shadow: 0 0 20px rgba(6, 182, 212, 0.35);
+}
+
+#lesionBurdenVal {
+  color: #F59E0B;
+  text-shadow: 0 0 20px rgba(245, 158, 11, 0.35);
+}
+
+.biomarker-desc {
+  font-size: 0.76rem;
+  color: #64748B;
+  font-weight: 500;
+}
+
+@media (max-width: 640px) {
+  .lesion-toggles {
+    grid-template-columns: 1fr;
+  }
+  .toggle-label.toggle-label-wide {
+    grid-column: span 1;
+  }
+  .biomarker-grid {
+    grid-template-columns: 1fr;
+  }
 }
 
 /* =====================================================================
