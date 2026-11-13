@@ -338,10 +338,16 @@ function loadCase(grade, sampleObj) {
   const samples = (typeof COHORT_DATA !== 'undefined' && COHORT_DATA[grade]) ? COHORT_DATA[grade] : (DATASET_SAMPLES[grade] || []);
   const sample = sampleObj || (samples.length > 0 ? samples[0] : null);
 
+  const preset = PRESET_CASES[grade] || PRESET_CASES[0];
+  const activeLesions = (sample && sample.lesions && Object.values(sample.lesions).some(v => v !== null))
+    ? sample.lesions
+    : (preset.lesions || {});
+
   if (sample) {
     currentCase = {
-      ...(PRESET_CASES[grade] || PRESET_CASES[0]),
+      ...preset,
       ...sample,
+      lesions: activeLesions,
       blurScore: sample.blurScore || sample.blur,
       brightness: sample.brightness,
       contrast: sample.contrast,
@@ -353,7 +359,7 @@ function loadCase(grade, sampleObj) {
       referral: sample.referral || (PRESET_CASES[grade] ? PRESET_CASES[grade].referral : '')
     };
   } else {
-    currentCase = { ...(PRESET_CASES[grade] || PRESET_CASES[0]) };
+    currentCase = { ...preset, lesions: activeLesions };
   }
 
   // Sync dropdown with active sample
@@ -466,8 +472,8 @@ function renderOverlays() {
   }
 
   // 3. Draw Lesions
-  if (showLesions && currentCase.lesions) {
-    drawLesions(currentCase.lesions);
+  if (showLesions) {
+    drawLesions(currentCase.lesions, currentCase.grade);
   }
 }
 
@@ -541,52 +547,224 @@ function drawVessels() {
   ctxOverlay.restore();
 }
 
-// Draw Diabetic Lesions
-function drawLesions(lesions) {
+// Draw Diabetic Lesions - Part-Wise Clinical Multi-Lesion Rendering
+function drawLesions(lesions, grade) {
   ctxOverlay.save();
 
-  // Draw Microaneurysms (tiny red circles)
-  if (lesions.ma) {
-    ctxOverlay.fillStyle = 'rgba(255, 30, 30, 0.9)';
-    const maCoords = [[230, 240], [245, 260], [270, 230], [280, 280], [255, 220], [290, 245]];
-    maCoords.forEach(([x, y]) => {
-      ctxOverlay.beginPath();
-      ctxOverlay.arc(x, y, 3, 0, Math.PI * 2);
-      ctxOverlay.fill();
-    });
-  }
-
-  // Draw Hard Exudates (bright yellow flecks)
-  if (lesions.ex) {
-    ctxOverlay.fillStyle = 'rgba(255, 230, 0, 0.95)';
-    const exCoords = [[210, 270], [215, 280], [225, 275], [230, 290], [220, 295], [205, 285]];
-    exCoords.forEach(([x, y]) => {
-      ctxOverlay.beginPath();
-      ctxOverlay.arc(x, y, 4, 0, Math.PI * 2);
-      ctxOverlay.fill();
-    });
-  }
-
-  // Draw Soft Exudates (cyan cloud patches)
-  if (lesions.se) {
-    ctxOverlay.fillStyle = 'rgba(0, 220, 255, 0.7)';
-    const seCoords = [[280, 320], [330, 220]];
-    seCoords.forEach(([x, y]) => {
-      ctxOverlay.beginPath();
-      ctxOverlay.ellipse(x, y, 16, 10, Math.PI / 4, 0, Math.PI * 2);
-      ctxOverlay.fill();
-    });
-  }
-
-  // Draw Neovascularization (purple fronds)
-  if (lesions.nv) {
-    ctxOverlay.strokeStyle = 'rgba(200, 50, 255, 0.9)';
-    ctxOverlay.lineWidth = 2.5;
+  // Part 0: If Healthy Retina (Grade 0), display clear clinical badge on canvas
+  if (grade === 0 || (!lesions && grade === 0)) {
+    ctxOverlay.fillStyle = 'rgba(15, 23, 42, 0.88)';
+    ctxOverlay.strokeStyle = 'rgba(16, 185, 129, 0.7)';
+    ctxOverlay.lineWidth = 1.5;
+    
+    const bx = 50, by = 460, bw = 412, bh = 36;
     ctxOverlay.beginPath();
-    ctxOverlay.arc(180, 230, 18, 0, Math.PI * 1.5);
+    ctxOverlay.roundRect ? ctxOverlay.roundRect(bx, by, bw, bh, 8) : ctxOverlay.rect(bx, by, bw, bh);
+    ctxOverlay.fill();
     ctxOverlay.stroke();
+
+    ctxOverlay.fillStyle = '#10B981';
+    ctxOverlay.font = 'bold 12px "Plus Jakarta Sans", sans-serif';
+    ctxOverlay.textAlign = 'center';
+    ctxOverlay.textBaseline = 'middle';
+    ctxOverlay.fillText('✅ Healthy Retina (Grade 0): No Pathological Lesions Present', 256, 478);
+    ctxOverlay.restore();
+    return;
   }
 
+  // Ensure lesions object exists for Grade >= 1
+  const activeLesions = lesions || (PRESET_CASES[grade] ? PRESET_CASES[grade].lesions : null) || {};
+
+  // Part 1: Draw Microaneurysms (MA - Red Focal Bulges with Glowing Halos)
+  const hasMA = activeLesions.ma || grade >= 1;
+  if (hasMA) {
+    const maCoords = [
+      [235, 240], [248, 258], [270, 235], [285, 275],
+      [255, 218], [295, 245], [315, 265], [260, 290],
+      [225, 220], [275, 205], [305, 290]
+    ];
+    maCoords.forEach(([x, y]) => {
+      // Outer bright halo ring
+      ctxOverlay.strokeStyle = 'rgba(255, 60, 60, 0.9)';
+      ctxOverlay.lineWidth = 1.8;
+      ctxOverlay.beginPath();
+      ctxOverlay.arc(x, y, 6, 0, Math.PI * 2);
+      ctxOverlay.stroke();
+
+      // Solid red core
+      ctxOverlay.fillStyle = '#FF1E1E';
+      ctxOverlay.beginPath();
+      ctxOverlay.arc(x, y, 3.5, 0, Math.PI * 2);
+      ctxOverlay.fill();
+
+      // Tiny white 3D highlight
+      ctxOverlay.fillStyle = '#FFFFFF';
+      ctxOverlay.beginPath();
+      ctxOverlay.arc(x - 1, y - 1, 1, 0, Math.PI * 2);
+      ctxOverlay.fill();
+    });
+
+    drawLesionCallout(235, 240, 'MA', '#FF1E1E', -26, -14);
+  }
+
+  // Part 2: Draw Hemorrhages (HE - Deep Crimson Dot & Blot Lesions)
+  const hasHE = activeLesions.he || grade >= 2;
+  if (hasHE) {
+    const heBlobs = [
+      { x: 210, y: 230, rx: 9, ry: 7, rot: 0.3 },
+      { x: 330, y: 245, rx: 12, ry: 8, rot: -0.4 },
+      { x: 275, y: 310, rx: 11, ry: 9, rot: 0.8 },
+      { x: 220, y: 330, rx: 8, ry: 6, rot: 0.1 },
+      { x: 345, y: 195, rx: 14, ry: 8, rot: -0.6 },
+      { x: 180, y: 310, rx: 10, ry: 7, rot: 0.5 },
+      { x: 310, y: 335, rx: 13, ry: 10, rot: -0.2 }
+    ];
+
+    heBlobs.forEach(blob => {
+      ctxOverlay.fillStyle = 'rgba(185, 0, 40, 0.9)';
+      ctxOverlay.beginPath();
+      ctxOverlay.ellipse(blob.x, blob.y, blob.rx, blob.ry, blob.rot, 0, Math.PI * 2);
+      ctxOverlay.fill();
+
+      ctxOverlay.strokeStyle = 'rgba(255, 80, 80, 0.85)';
+      ctxOverlay.lineWidth = 1.8;
+      ctxOverlay.stroke();
+    });
+
+    drawLesionCallout(330, 245, 'HE', '#B40028', 18, -14);
+  }
+
+  // Part 3: Draw Hard Exudates (EX - Brilliant Yellow Lipid Deposits)
+  const hasEX = activeLesions.ex || grade >= 2;
+  if (hasEX) {
+    const exCoords = [
+      [210, 270], [218, 280], [228, 272], [235, 288],
+      [222, 295], [205, 285], [198, 275], [242, 280],
+      [248, 292], [214, 302], [230, 305], [202, 295]
+    ];
+    exCoords.forEach(([x, y]) => {
+      ctxOverlay.fillStyle = '#FFE600';
+      ctxOverlay.beginPath();
+      ctxOverlay.arc(x, y, 4.5, 0, Math.PI * 2);
+      ctxOverlay.fill();
+
+      ctxOverlay.strokeStyle = '#FFFFFF';
+      ctxOverlay.lineWidth = 1.2;
+      ctxOverlay.stroke();
+    });
+
+    drawLesionCallout(210, 270, 'EX', '#FFE100', -26, 14, '#0F172A');
+  }
+
+  // Part 4: Draw Soft Exudates / Cotton-Wool Spots (SE/CW - Cyan Ischemic Patches)
+  const hasSE = activeLesions.se || grade >= 3;
+  if (hasSE) {
+    const sePatches = [
+      { x: 285, y: 325, rx: 22, ry: 14, rot: 0.6 },
+      { x: 335, y: 215, rx: 18, ry: 12, rot: -0.5 },
+      { x: 225, y: 190, rx: 16, ry: 11, rot: 0.2 }
+    ];
+
+    sePatches.forEach(patch => {
+      const grad = ctxOverlay.createRadialGradient(patch.x, patch.y, 2, patch.x, patch.y, patch.rx);
+      grad.addColorStop(0, 'rgba(0, 220, 255, 0.85)');
+      grad.addColorStop(0.7, 'rgba(0, 180, 240, 0.45)');
+      grad.addColorStop(1, 'rgba(0, 220, 255, 0)');
+
+      ctxOverlay.fillStyle = grad;
+      ctxOverlay.beginPath();
+      ctxOverlay.ellipse(patch.x, patch.y, patch.rx, patch.ry, patch.rot, 0, Math.PI * 2);
+      ctxOverlay.fill();
+
+      ctxOverlay.strokeStyle = 'rgba(0, 240, 255, 0.7)';
+      ctxOverlay.lineWidth = 1.5;
+      ctxOverlay.stroke();
+    });
+
+    drawLesionCallout(285, 325, 'CW', '#00DCFF', 22, -10, '#0F172A');
+  }
+
+  // Part 5: Draw Neovascularization (NV - Magenta Fragile Abnormal Vessels)
+  const hasNV = activeLesions.nv || grade >= 4;
+  if (hasNV) {
+    ctxOverlay.strokeStyle = '#D946EF';
+    ctxOverlay.lineWidth = 2.8;
+    ctxOverlay.lineCap = 'round';
+    ctxOverlay.shadowColor = 'rgba(217, 70, 239, 0.7)';
+    ctxOverlay.shadowBlur = 8;
+
+    const fronds = [
+      [[180, 230], [175, 210], [160, 195], [145, 185], [130, 182]],
+      [[175, 210], [185, 195], [195, 180], [205, 172]],
+      [[160, 195], [165, 180], [160, 168]],
+      [[180, 240], [195, 242], [210, 248], [225, 252]],
+      [[195, 242], [202, 230], [215, 222]]
+    ];
+
+    fronds.forEach(frond => {
+      ctxOverlay.beginPath();
+      ctxOverlay.moveTo(frond[0][0], frond[0][1]);
+      for (let i = 1; i < frond.length; i++) {
+        ctxOverlay.lineTo(frond[i][0], frond[i][1]);
+      }
+      ctxOverlay.stroke();
+    });
+
+    ctxOverlay.shadowBlur = 0;
+    drawLesionCallout(145, 185, 'NV', '#D946EF', -26, -14);
+  }
+
+  // Part 6: Draw Top-Left Lesion Legend Badge
+  drawLesionLegend(grade);
+
+  ctxOverlay.restore();
+}
+
+// Helper: Draw small clinical tag badge next to lesion cluster
+function drawLesionCallout(x, y, text, bgColor, offsetX = 10, offsetY = -10, textColor = '#FFFFFF') {
+  const tx = x + offsetX;
+  const ty = y + offsetY;
+  const pw = 24, ph = 14;
+
+  ctxOverlay.save();
+  ctxOverlay.fillStyle = bgColor;
+  ctxOverlay.beginPath();
+  ctxOverlay.roundRect ? ctxOverlay.roundRect(tx, ty, pw, ph, 3) : ctxOverlay.rect(tx, ty, pw, ph);
+  ctxOverlay.fill();
+
+  ctxOverlay.strokeStyle = '#FFFFFF';
+  ctxOverlay.lineWidth = 1;
+  ctxOverlay.stroke();
+
+  ctxOverlay.fillStyle = textColor;
+  ctxOverlay.font = 'bold 9px "Plus Jakarta Sans", sans-serif';
+  ctxOverlay.textAlign = 'center';
+  ctxOverlay.textBaseline = 'middle';
+  ctxOverlay.fillText(text, tx + pw / 2, ty + ph / 2 + 0.5);
+  ctxOverlay.restore();
+}
+
+// Helper: Draw Lesion Legend at Top Left
+function drawLesionLegend(grade) {
+  const lx = 14, ly = 14;
+  ctxOverlay.save();
+  ctxOverlay.fillStyle = 'rgba(15, 23, 42, 0.88)';
+  ctxOverlay.strokeStyle = 'rgba(239, 68, 68, 0.5)';
+  ctxOverlay.lineWidth = 1.2;
+
+  const lw = 220, lh = 28;
+  ctxOverlay.beginPath();
+  ctxOverlay.roundRect ? ctxOverlay.roundRect(lx, ly, lw, lh, 6) : ctxOverlay.rect(lx, ly, lw, lh);
+  ctxOverlay.fill();
+  ctxOverlay.stroke();
+
+  ctxOverlay.fillStyle = '#F87171';
+  ctxOverlay.font = 'bold 10px "Plus Jakarta Sans", sans-serif';
+  ctxOverlay.textAlign = 'left';
+  ctxOverlay.textBaseline = 'middle';
+  
+  const tags = grade === 1 ? 'MA' : grade === 2 ? 'MA • HE • EX' : grade === 3 ? 'MA • HE • EX • CW' : 'MA • HE • EX • CW • NV';
+  ctxOverlay.fillText(`🔴 Lesions Detected: ${tags}`, lx + 10, ly + lh / 2);
   ctxOverlay.restore();
 }
 
